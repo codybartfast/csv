@@ -1,24 +1,54 @@
 
-using System.Text;
-
 namespace Fmbm.Csv;
 
 public static class Csv
 {
+    public static IEnumerable<TItem> Parse<TItem>(
+        string csv,
+        Func<Func<string, Cell>, TItem> maker)
+    {
+        var table = GetTable(csv);
+        var headers = table.Rows[0].Cells.Select(c => c.Text).ToArray();
+        var dict = new Dictionary<string, int>(
+            StringComparer.InvariantCultureIgnoreCase);
+        for (int i = 0; i < headers.Length; i++)
+        {
+            dict.Add(headers[i], i);
+        }
+        Func<string, int> getIndex = header => dict[header];
+        foreach (var row in table.Rows)
+        {
+            Func<string, Cell> getCell = header => row.Lookup(getIndex, header);
+            yield return maker(getCell);
+        }
+    }
+
+    static Table GetTable(string csvText)
+    {
+        return new Table(Array.Empty<Row>());
+    }
+
 
     public static string GetText<TItem>(
         IEnumerable<TItem> items,
-        params (string, Func<TItem, object>)[] colInfos
-        )
+        params (string, Func<TItem, object>)[] colInfos)
     {
-        var rows = new List<string>();
-        var headers = colInfos.Select(ci => ci.Item1).ToArray();
-        rows.Add(String.Join(",", headers));
+        return GetTable(items, colInfos).ToString();
+    }
+
+    static Table GetTable<TItem>(
+        IEnumerable<TItem> items,
+        params (string, Func<TItem, object>)[] colInfos)
+    {
+        var rows = new List<Row>();
+        var headers = colInfos.Select(ci => Cell.From(ci.Item1));
+        rows.Add(new Row(headers));
         foreach (var item in items)
         {
-            var values = colInfos.Select(ci => ci.Item2(item).ToString());
-            rows.Add(String.Join(",", values));
+            var values = colInfos.Select(ci => ci.Item2(item));
+            rows.Add(new Row(values.Select(str => Cell.From(str ?? ""))));
         }
-        return string.Join("\r\n", rows);
+        return new Table(rows);
     }
+
 }

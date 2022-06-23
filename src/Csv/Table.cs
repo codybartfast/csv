@@ -4,10 +4,15 @@ namespace Fmbm.Csv;
 
 class Table
 {
-    ImmutableArray<Row> Rows { get; }
+    internal ImmutableArray<Row> Rows { get; }
 
-    public Table(Row[] rows)
+    internal Table(IEnumerable<Row> rows)
     {
-        this.Rows = ImmutableArray.Create(rows);
+        this.Rows = ImmutableArray.Create(rows.ToArray());
+    }
+
+    public override string ToString()
+    {
+        return String.Join("\r\n", Rows);
     }
 }
