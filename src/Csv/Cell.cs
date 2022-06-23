@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Fmbm.Csv;
@@ -52,6 +53,30 @@ public class Cell
         {
             return naiveText;
         }
+    }
+
+    public static implicit operator string(Cell cell)
+    {
+        return cell.Text;
+    }
+
+    public static implicit operator DateTime(Cell cell)
+    {
+        // if (DateTime.TryParseExact(
+        //     cell.Text,
+        //     "yyyy-MM-dd HH:mm",
+        //     null,
+        //     DateTimeStyles.None,
+        //     out var dt))
+        // {
+        //     return dt;
+        // }
+        return DateTime.Parse(cell.Text);
+    }
+
+    public static implicit operator int(Cell cell)
+    {
+        return int.Parse(cell.Text);
     }
 
     public override string ToString()

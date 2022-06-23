@@ -2,7 +2,19 @@
 
 Console.WriteLine("Hello, World!");
 
+var csv = @"Date,Number,Some Text,Name
+23/06/2022 06:43,12,Apple,Turnover
+23/06/2022 06:43,12,An Orange,Carrot";
 
+var items = Csv.Parse(csv, col =>
+    new Cake(
+        col("Name"),
+        col("Some Text"),
+        col("Date"),
+        col("Number")))
+    .ToArray();
+
+Console.WriteLine(items[1]);
 
 // var cake1 = new Cake("Fruit", "Bake", DateTime.Parse("2022-06-23T15:23"), 6);
 // var cake2 = new Cake("Victoria", "Stir", DateTime.Now, 400000000);

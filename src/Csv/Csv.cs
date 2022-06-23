@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 
 namespace Fmbm.Csv;
 
@@ -16,7 +17,7 @@ public static class Csv
             dict.Add(headers[i], i);
         }
         Func<string, int> getIndex = header => dict[header];
-        foreach (var row in table.Rows)
+        foreach (var row in table.Rows.Skip(1))
         {
             Func<string, Cell> getCell = header => row.Lookup(getIndex, header);
             yield return maker(getCell);
@@ -25,7 +26,13 @@ public static class Csv
 
     static Table GetTable(string csvText)
     {
-        return new Table(Array.Empty<Row>());
+        return new Table(
+            Regex.Split(csvText, "\r?\n")
+                .Select(line =>
+                    new Row(
+                        line.Split(",")
+                            .Select(t => Cell.From(t))))
+                .ToArray());
     }
 
 
