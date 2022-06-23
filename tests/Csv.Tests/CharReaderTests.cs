@@ -9,8 +9,10 @@ public class CharReaderTests
         var rdr = new CharReader(text);
         foreach (var expected in text)
         {
+            Assert.False(rdr.AtEnd);
             Assert.Equal(expected, rdr.Read());
         }
+        Assert.True(rdr.AtEnd);
         Action readLast = () => rdr.Read();
         Assert.Throws<CsvParseException>(readLast);
     }
@@ -23,6 +25,7 @@ public class CharReaderTests
 
         foreach (var expected in text)
         {
+            Assert.False(rdr.AtEnd);
             if (rdr.TryRead(out var c))
             {
                 Assert.Equal(expected, c);
@@ -32,6 +35,7 @@ public class CharReaderTests
                 Assert.True(false, "TryRead should return true");
             }
         }
+        Assert.True(rdr.AtEnd);
         if (rdr.TryRead(out var nc))
         {
             Assert.False(true, "TryRead should return false");

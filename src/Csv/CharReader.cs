@@ -29,4 +29,6 @@ internal class CharReader
         chr = (char)i;
         return true;
     }
+
+    public bool AtEnd => sr.Peek() == -1;
 }
