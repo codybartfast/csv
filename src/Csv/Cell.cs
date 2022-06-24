@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace Fmbm.Csv;
+namespace Fmbm.Text;
 
 public class Cell
 {

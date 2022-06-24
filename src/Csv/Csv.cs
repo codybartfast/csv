@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace Fmbm.Csv;
+namespace Fmbm.Text;
 
 public static class Csv
 {
@@ -14,7 +14,7 @@ public static class Csv
             StringComparer.InvariantCultureIgnoreCase);
         for (int i = 0; i < headers.Length; i++)
         {
-            dict.Add(headers[i], i);
+            dict.Add(headers[i].Trim(), i);
         }
         Func<string, int> getIndex = header => dict[header];
         foreach (var row in table.Rows.Skip(1))

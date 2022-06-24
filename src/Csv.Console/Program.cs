@@ -1,12 +1,14 @@
-﻿using Fmbm.Csv;
+﻿using Fmbm.Text;
+using Fmbm.IO;
 
 Console.WriteLine("Hello, World!");
 
-var csv = @"Date,Number,Some Text,Name
-23/06/2022 06:43,12,Apple,Turnover
-23/06/2022 06:43,12,An Orange,Carrot";
+var dir = DirPaths.AppRoot.CheckedPath;
+var inPath = Path.Combine(dir, "cakeIn.csv");
+var outPath = Path.Combine(dir, "cakeOut.csv");
+var csvIn = new CCFile(inPath).ReadText();
 
-var items = Csv.Parse(csv, col =>
+var cakes = Csv.Parse(csvIn, col =>
     new Cake(
         col("Name"),
         col("Some Text"),
@@ -14,7 +16,16 @@ var items = Csv.Parse(csv, col =>
         col("Number")))
     .ToArray();
 
-Console.WriteLine(items[1]);
+Console.WriteLine(cakes[1]);
+
+var csvOut = Csv.GetText(cakes,
+    ("Date", c => c.Added),
+    ("Number", c => c.Serves),
+    ("Some Text", c => c.Recipe),
+    ("Name", c => c.Name)
+);
+
+new CCFile(outPath).WriteText(csvOut);
 
 // var cake1 = new Cake("Fruit", "Bake", DateTime.Parse("2022-06-23T15:23"), 6);
 // var cake2 = new Cake("Victoria", "Stir", DateTime.Now, 400000000);

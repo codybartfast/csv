@@ -1,4 +1,4 @@
-namespace Fmbm.Csv.Tests;
+namespace Fmbm.Text.Tests;
 
 public class CharReaderTests
 {

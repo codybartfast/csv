@@ -1,4 +1,4 @@
-﻿namespace Fmbm.Csv;
+﻿namespace Fmbm.Text;
 internal class CharReader
 {
     readonly StringReader sr;

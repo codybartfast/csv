@@ -4,6 +4,10 @@
     <ProjectReference Include="..\Csv\Csv.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="fmbM.All" Version="1.0.0-beta.1" />
+  </ItemGroup>
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>

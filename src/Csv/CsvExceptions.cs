@@ -1,4 +1,4 @@
-namespace Fmbm.Csv;
+namespace Fmbm.Text;
 
 public class CsvException : Exception
 {

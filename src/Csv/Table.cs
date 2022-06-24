@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace Fmbm.Csv;
+namespace Fmbm.Text;
 
 class Table
 {
