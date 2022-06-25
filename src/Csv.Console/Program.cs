@@ -8,12 +8,13 @@ var inPath = Path.Combine(dir, "cakeIn.csv");
 var outPath = Path.Combine(dir, "cakeOut.csv");
 var csvIn = new CCFile(inPath).ReadText();
 
-var cakes = Csv.Parse(csvIn, col =>
+
+var cakes = Csv.Parse(csvIn, row =>
     new Cake(
-        col("Name"),
-        col("Some Text"),
-        col("Date"),
-        col("Number")))
+        row("Name"),
+        row("Some Text"),
+        row("Date"),
+        row("Number")))
     .ToArray();
 
 Console.WriteLine(cakes[1]);
@@ -26,18 +27,6 @@ var csvOut = Csv.GetText(cakes,
 );
 
 new CCFile(outPath).WriteText(csvOut);
-
-// var cake1 = new Cake("Fruit", "Bake", DateTime.Parse("2022-06-23T15:23"), 6);
-// var cake2 = new Cake("Victoria", "Stir", DateTime.Now, 400000000);
-// var cakes = new[] { cake1, cake2 };
-
-// var r = Csv.GetText(cakes,
-//     ("Name", c => c.Name),
-//     ("Method", c => c.Recipe),
-//     ("Added", c => c.Added),
-//     ("Serves", c => c.Serves));
-
-// Console.WriteLine(r);
 
 public class Cake
 {

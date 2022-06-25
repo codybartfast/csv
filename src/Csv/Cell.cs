@@ -7,7 +7,7 @@ public class Cell
 {
     internal string Text { get; init; }
 
-    Cell(string text)
+    internal Cell(string text)
     {
         this.Text = text;
     }

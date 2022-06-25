@@ -8,7 +8,7 @@ public static class Csv
         string csv,
         Func<Func<string, Cell>, TItem> maker)
     {
-        var table = GetTable(csv);
+        var table = TableReader.GetTable(csv);
         var headers = table.Rows[0].Cells.Select(c => c.Text).ToArray();
         var dict = new Dictionary<string, int>(
             StringComparer.InvariantCultureIgnoreCase);
@@ -23,18 +23,6 @@ public static class Csv
             yield return maker(getCell);
         }
     }
-
-    static Table GetTable(string csvText)
-    {
-        return new Table(
-            Regex.Split(csvText, "\r?\n")
-                .Select(line =>
-                    new Row(
-                        line.Split(",")
-                            .Select(t => Cell.From(t))))
-                .ToArray());
-    }
-
 
     public static string GetText<TItem>(
         IEnumerable<TItem> items,
