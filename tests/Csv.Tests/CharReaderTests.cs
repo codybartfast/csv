@@ -18,31 +18,8 @@ public class CharReaderTests
     }
 
     [Fact]
-    public void TryRead_AtEndOfFile_ReturnsFalse()
+    public void Peek()
     {
-        var text = "abc";
-        var rdr = new CharReader(text);
-
-        foreach (var expected in text)
-        {
-            Assert.False(rdr.AtEnd);
-            if (rdr.TryRead(out var c))
-            {
-                Assert.Equal(expected, c);
-            }
-            else
-            {
-                Assert.True(false, "TryRead should return true");
-            }
-        }
-        Assert.True(rdr.AtEnd);
-        if (rdr.TryRead(out var nc))
-        {
-            Assert.False(true, "TryRead should return false");
-        }
-        else
-        {
-            Assert.False(nc.HasValue);
-        }
+        Assert.True(false);
     }
 }

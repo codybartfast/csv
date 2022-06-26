@@ -171,4 +171,7 @@ public class TableReaderTests
         }
     }
 
+    // char ahead of dq Exception
+    // char after dq Exception
+    // allow ws around dq text
 }

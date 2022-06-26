@@ -18,16 +18,14 @@ internal class CharReader
         return (char)i;
     }
 
-    public bool TryRead(out char? chr)
+    public char Peek()
     {
-        var i = sr.Read();
+        var i = sr.Peek();
         if (i == -1)
         {
-            chr = null;
-            return false;
+            throw new CsvParseException("Tried to Peek at End of File");
         }
-        chr = (char)i;
-        return true;
+        return (char)i;
     }
 
     public bool AtEnd => sr.Peek() == -1;
