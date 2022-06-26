@@ -2,6 +2,8 @@ namespace Fmbm.Text;
 
 internal class TableReader
 {
+    const char doubleQuote = '"';
+
     public static Table GetTable(string text)
     {
         var reader = new CharReader(text);
@@ -29,8 +31,7 @@ internal class TableReader
 
     static Cell ReadCell(CharReader reader, out bool endOfRow)
     {
-        var chars = new LinkedList<char>();
-        string? quotedText = null;
+        var chars = new List<char>();
         char c;
 
         while (!reader.AtEnd)
@@ -40,14 +41,20 @@ internal class TableReader
                 case ',':
                     endOfRow = false;
                     return Cell();
-                case '\n':
-                    if (chars.Any() && chars.Last() == '\r')
+                case '\r':
+                    if (!reader.AtEnd && reader.Peek() == '\n')
                     {
-                        chars.RemoveLast();
+                        reader.Read();
+                        endOfRow = true;
+                        return Cell();
                     }
+                    chars.Add(c);
+                    break;
+                case '\n':
                     endOfRow = true;
                     return Cell();
                 case '"':
+                    // Check there weren't invalid characters before quoted
                     foreach (var leadingChar in chars)
                     {
                         if (!Char.IsWhiteSpace(leadingChar))
@@ -56,8 +63,16 @@ internal class TableReader
                                 $"Non-whitespace char '{leadingChar}' found before opening double quote.");
                         }
                     }
+                    // Read quoted
                     chars = ReadQuoted(reader);
+                    // Ignore insignificant whitespace after quoted
                     char p;
+                    while (!reader.AtEnd
+                        && Char.IsWhiteSpace(p = reader.Peek()) && p != '\n')
+                    {
+                        reader.Read();
+                    }
+                    // Check for invalid characters after quoted
                     if (reader.AtEnd || (p = reader.Peek()) == ',' || p == '\n')
                     {
                         break;
@@ -68,7 +83,7 @@ internal class TableReader
                             $"Non-whitespace char '{p}' found after closing double quote.");
                     }
                 default:
-                    chars.AddLast(c);
+                    chars.Add(c);
                     break;
             }
         }
@@ -82,34 +97,28 @@ internal class TableReader
         }
     }
 
-    static LinkedList<char> ReadQuoted(CharReader reader)
+    static List<char> ReadQuoted(CharReader reader)
     {
-        var chars = new LinkedList<char>();
+        var chars = new List<char>();
         char c;
 
         while (true)
         {
             switch (c = reader.Read())
             {
-                case '"':
-                    if (!reader.AtEnd && reader.Peek() == c)
+                case doubleQuote:
+                    if (!reader.AtEnd && reader.Peek() == doubleQuote)
                     {
                         reader.Read();
-                        chars.AddLast(c);
+                        chars.Add(doubleQuote);
                         break;
                     }
                     else
                     {
-                        char p;
-                        while (!reader.AtEnd
-                            && Char.IsWhiteSpace(p = reader.Peek()) && p != '\n')
-                        {
-                            reader.Read();
-                        }
                         return chars;
                     }
                 default:
-                    chars.AddLast(c);
+                    chars.Add(c);
                     break;
             }
         }

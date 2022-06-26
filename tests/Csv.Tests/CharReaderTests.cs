@@ -18,8 +18,19 @@ public class CharReaderTests
     }
 
     [Fact]
-    public void Peek()
+    public void Peak_AtEndOfFile_Throws()
     {
-        Assert.True(false);
+        var text = "abc";
+        var rdr = new CharReader(text);
+        for (var i = 0; i < text.Length; i++)
+        {
+            Assert.False(rdr.AtEnd);
+            Assert.Equal(text[i], rdr.Peek());
+            Assert.Equal(text[i], rdr.Peek());
+            rdr.Read();
+        }
+        Assert.True(rdr.AtEnd);
+        Action peekLast = () => rdr.Read();
+        Assert.Throws<CsvParseException>(peekLast);
     }
 }
