@@ -1,6 +1,6 @@
 namespace Fmbm.Text;
 
-internal class TableReader
+internal class CsvParser
 {
     const char doubleQuote = '"';
 

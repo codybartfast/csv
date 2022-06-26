@@ -1,5 +1,3 @@
-using System.Text.RegularExpressions;
-
 namespace Fmbm.Text;
 
 public static class Csv
@@ -8,7 +6,7 @@ public static class Csv
         string csv,
         Func<Func<string, Cell>, TItem> maker)
     {
-        var table = TableReader.GetTable(csv);
+        var table = CsvParser.GetTable(csv);
         var headers = table.Rows[0].Cells.Select(c => c.Text).ToArray();
         var dict = new Dictionary<string, int>(
             StringComparer.InvariantCultureIgnoreCase);
@@ -28,10 +26,10 @@ public static class Csv
         IEnumerable<TItem> items,
         params (string, Func<TItem, object>)[] colInfos)
     {
-        return GetTable(items, colInfos).ToString();
+        return GetTableFromItems(items, colInfos).ToString();
     }
 
-    static Table GetTable<TItem>(
+    static Table GetTableFromItems<TItem>(
         IEnumerable<TItem> items,
         params (string, Func<TItem, object>)[] colInfos)
     {
@@ -46,4 +44,30 @@ public static class Csv
         return new Table(rows);
     }
 
+    static void VerifyTable(Table table)
+    {
+        if (table.Length == 0)
+        {
+            throw new CsvException("Table has no rows");
+        }
+
+        var headers = table.Rows[0].Cells.CastArray<string>();
+        var grouped = headers.GroupBy(h => h).ToArray();
+        var dup = grouped.FirstOrDefault(g => g.Count() > 1);
+        if (dup is not null)
+        {
+            throw new CsvException($"Duplicate header: {dup.Key}");
+        }
+
+        var width = headers.Length;
+        for (int i = 0; i < table.Length; i++)
+        {
+            var rowWidth = table[i].Cells.Length;
+            if (rowWidth != width)
+            {
+                throw new CsvException(
+                    $"Row {i} has {rowWidth} values but there are {width} headers.");
+            }
+        }
+    }
 }
