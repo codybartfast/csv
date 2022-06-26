@@ -148,4 +148,27 @@ public class TableReaderTests
             }
         }
     }
+
+    [Fact]
+    public void SimpleQuotes()
+    {
+        var text =
+            "\"00\",\"01\",\"02\",\"03\"\n"
+            + "\"10\",\"11\",\"12\",\"13\"\n"
+            + "\"20\",\"21\",\"22\",\"23\"\n";
+        var table = TableReader.GetTable(text);
+        Assert.Equal(3, table.Length);
+        foreach (var row in table.Rows)
+        {
+            Assert.Equal(4, row.Length);
+        }
+        for (var r = 0; r < table.Length; r++)
+        {
+            for (var c = 0; c < table[0].Length; c++)
+            {
+                Assert.Equal($"{r}{c}", table[r][c]);
+            }
+        }
+    }
+
 }

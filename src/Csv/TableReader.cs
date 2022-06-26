@@ -60,4 +60,46 @@ internal class TableReader
             return new Cell(text);
         }
     }
-}
+
+    static string ReadQuoted(CharReader reader)
+    {
+        var chars = new LinkedList<char>();
+        char c;
+        bool pendingDoubleQuote = false;
+        while (!reader.AtEnd)
+        {
+            switch (c = reader.Read())
+            {
+                case '"':
+                    if (pendingDoubleQuote)
+                    {
+                        pendingDoubleQuote = false;
+                        chars.AddLast(c);
+                        break;
+                    }
+                    else
+                    {
+                        /////////// Wrong, need to set as pending and peek.
+                        return Text();
+                    }
+                default:
+                    chars.AddLast(c);
+                    break;
+            }
+        }
+        if (pendingDoubleQuote)
+        {
+            return Text();
+        }
+        else
+        {
+            throw new Exception();
+        }
+
+        string Text()
+        {
+            var text = new String(chars.ToArray());
+            return new Cell(text);
+
+        }
+    }
