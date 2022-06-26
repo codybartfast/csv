@@ -4,7 +4,7 @@ namespace Fmbm.Text;
 
 public static class Csv
 {
-    public static IEnumerable<TItem> Parse<TItem>(
+    public static IEnumerable<TItem> GetItems<TItem>(
         string csv,
         Func<Func<string, Cell>, TItem> maker)
     {

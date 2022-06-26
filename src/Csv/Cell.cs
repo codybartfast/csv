@@ -41,7 +41,7 @@ public class Cell
 
     static readonly Regex needsEncoding =
         new Regex("[,\"\r\n]", RegexOptions.Compiled);
-    static string Encode(string naiveText)
+    internal static string Encode(string naiveText)
     {
         var dq = "\"";
         var dqdq = "\"\"";
@@ -76,7 +76,7 @@ public class Cell
 
     public static implicit operator int(Cell cell)
     {
-        return int.Parse(cell.Text);
+        return int.Parse(cell.Text, NumberStyles.AllowThousands);
     }
 
     public override string ToString()

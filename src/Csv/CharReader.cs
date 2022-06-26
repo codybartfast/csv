@@ -1,32 +1,32 @@
 ﻿namespace Fmbm.Text;
 internal class CharReader
 {
-    readonly StringReader sr;
+    readonly string text;
+    readonly int length;
+    int pos = 0;
 
     public CharReader(string text)
     {
-        this.sr = new StringReader(text);
-    }
-
-    public char Read()
-    {
-        var i = sr.Read();
-        if (i == -1)
-        {
-            throw new CsvParseException("Unexpected End Of File");
-        }
-        return (char)i;
+        this.text = text;
+        this.length = text.Length;
     }
 
     public char Peek()
     {
-        var i = sr.Peek();
-        if (i == -1)
+        if (pos >= length)
         {
-            throw new CsvParseException("Tried to Peek at End of File");
+            throw new CsvParseException(
+                "Tried to read/peek beyond end of text");
         }
-        return (char)i;
+        return text[pos];
     }
 
-    public bool AtEnd => sr.Peek() == -1;
+    public char Read()
+    {
+        var c = Peek();
+        pos++;
+        return c;
+    }
+
+    public bool AtEnd => pos >= length;
 }

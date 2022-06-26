@@ -8,7 +8,7 @@ var inPath = Path.Combine(dir, "cakeIn.csv");
 var outPath = Path.Combine(dir, "cakeOut.csv");
 var csvIn = new CCFile(inPath).ReadText();
 
-var cakes = Csv.Parse(csvIn, row =>
+var cakes = Csv.GetItems(csvIn, row =>
     new Cake(
         row("Name"),
         row("Some Text"),
@@ -16,6 +16,7 @@ var cakes = Csv.Parse(csvIn, row =>
         row("Number")))
     .ToArray();
 
+Console.WriteLine(cakes[0]);
 Console.WriteLine(cakes[1]);
 
 var csvOut = Csv.GetText(cakes,
@@ -26,19 +27,6 @@ var csvOut = Csv.GetText(cakes,
 );
 
 new CCFile(outPath).WriteText(csvOut);
-
-var text =
-    "\"00\",\"01\",\"02\",\"03\"\n"
-    + "\"10\",\"11\",\"12\",\"13\"\n"
-    + "\"20\",\"21\",\"22\",\"23\"\n";
-
-var table = TableReader.GetTable(text);
-
-Console.WriteLine();
-Console.WriteLine(text);
-Console.WriteLine();
-Console.WriteLine(table);
-
 
 public class Cake
 {

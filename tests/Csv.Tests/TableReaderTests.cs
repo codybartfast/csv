@@ -171,7 +171,85 @@ public class TableReaderTests
         }
     }
 
-    // char ahead of dq Exception
-    // char after dq Exception
-    // allow ws around dq text
+    [Fact]
+    public void QuotedTable()
+    {
+        var innerText = Cell.Encode(
+            "\"00\",\"01\",\"02\",\"03\"\n"
+            + "\"10\",\":-)\",\"12\",\"13\"\n"
+            + "\"20\",\"21\",\"22\",\"23\"\n");
+        var middleText = Cell.Encode(
+            "\"00\",\"01\",\"02\",\"03\"\r\n"
+            + $"\"10\",{innerText},\"12\",\"13\"\r\n"
+            + "\"20\",\"21\",\"22\",\"23\"\r\n");
+        var outerText =
+            "\"00\",\"01\",\"02\",\"03\"\n"
+            + $"\"10\",{middleText},\"12\",\"13\"\n"
+            + "\"20\",\"21\",\"22\",\"23\"\n";
+        var outerTable = TableReader.GetTable(outerText);
+        Check(outerTable);
+        var middleTable = TableReader.GetTable(outerTable[1][1]);
+        Check(middleTable);
+        var innerTable = TableReader.GetTable(middleTable[1][1]);
+        Check(innerTable, ":-)");
+
+        void Check(Table table, string? value1_1 = null)
+        {
+            Assert.Equal(3, table.Length);
+            foreach (var row in table.Rows)
+            {
+                Assert.Equal(4, row.Length);
+            }
+            for (var r = 0; r < table.Length; r++)
+            {
+                for (var c = 0; c < table[0].Length; c++)
+                {
+                    if (c == 1 && r == 1)
+                    {
+                        if(value1_1 != null){
+                            Assert.Equal(value1_1, table[1][1]);
+                        }
+                    }
+                    else
+                    {
+                        Assert.Equal($"{r}{c}", table[r][c]);
+                    }
+                }
+            }
+        }
+    }
+
+    [Fact]
+    public void AllowWhitespaceAroundQuoted()
+    {
+        var text =
+            " \"00\"  ,  \"01\"  ,  \"02\"  ,  \"03\"  \n"
+            + " \"10\"  ,   \"11\"  ,   \"12\"  ,   \"13\"  \r\n"
+            + "     \"20\"  ,  \r  \"21\"  ,  \r\"22\"   ,  \"23\"\r   \n";
+        var table = TableReader.GetTable(text);
+        Assert.Equal(3, table.Length);
+        foreach (var row in table.Rows)
+        {
+            Assert.Equal(4, row.Length);
+        }
+        for (var r = 0; r < table.Length; r++)
+        {
+            for (var c = 0; c < table[0].Length; c++)
+            {
+                Assert.Equal($"{r}{c}", table[r][c]);
+            }
+        }
+    }
+
+    [Fact]
+    public void ThrowOnBadQuoted()
+    {
+        var bText = "The,  X  \" quick\"  , brown, fox.";
+        Action charBeforeQuoted = () => TableReader.GetTable(bText);
+        Assert.Throws<CsvParseException>(charBeforeQuoted);
+
+        var aText = "The,  \" quick\"  Y  , brown, fox.";
+        Action charAfterQuoted = () => TableReader.GetTable(aText);
+        Assert.Throws<CsvParseException>(charAfterQuoted);
+    }
 }
