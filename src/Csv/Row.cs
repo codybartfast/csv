@@ -11,10 +11,9 @@ class Row
         this.Cells = ImmutableArray.Create(cells.ToArray());
     }
 
-    public Cell Lookup(Func<string, int> getIndex, string header)
-    {
-        return Cells[getIndex(header)];
-    }
+    public int Length => Cells.Length;
+
+    public Cell this[int idx] => Cells[idx];
 
     public override string ToString()
     {

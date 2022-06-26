@@ -19,7 +19,7 @@ public static class Csv
         Func<string, int> getIndex = header => dict[header];
         foreach (var row in table.Rows.Skip(1))
         {
-            Func<string, Cell> getCell = header => row.Lookup(getIndex, header);
+            Func<string, Cell> getCell = header => row[getIndex(header)];
             yield return maker(getCell);
         }
     }
@@ -41,7 +41,7 @@ public static class Csv
         foreach (var item in items)
         {
             var values = colInfos.Select(ci => ci.Item2(item));
-            rows.Add(new Row(values.Select(str => Cell.From(str ?? ""))));
+            rows.Add(new Row(values.Select(str => Cell.From(str))));
         }
         return new Table(rows);
     }

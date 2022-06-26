@@ -40,7 +40,7 @@ internal class TableReader
                     endOfRow = false;
                     return Cell();
                 case '\n':
-                    if (chars.Last() == '\r')
+                    if (chars.Any() && chars.Last() == '\r')
                     {
                         chars.RemoveLast();
                     }
