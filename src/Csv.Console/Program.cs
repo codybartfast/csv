@@ -1,7 +1,12 @@
 ﻿using Fmbm.Text;
 using Fmbm.IO;
 
-Console.WriteLine("Hello, World!");
+Console.WriteLine(@"
+
+More numeric conversions
+Sample (external) converter.
+
+Hello, World!");
 
 var dir = DirPaths.AppRoot.CheckedPath;
 var inPath = Path.Combine(dir, "cakeIn.csv");
@@ -27,6 +32,7 @@ var csvOut = Csv.GetText(cakes,
 );
 
 new CCFile(outPath).WriteText(csvOut);
+
 
 public class Cake
 {

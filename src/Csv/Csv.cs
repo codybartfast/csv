@@ -3,10 +3,11 @@ namespace Fmbm.Text;
 public static class Csv
 {
     public static IEnumerable<TItem> GetItems<TItem>(
-        string csv,
+        string csvText,
         Func<Func<string, Cell>, TItem> maker)
     {
-        var table = CsvParser.GetTable(csv);
+        var table = GetTable(csvText);
+        VerifyTable(table);
         var headers = table.Rows[0].Cells.Select(c => c.Text).ToArray();
         var dict = new Dictionary<string, int>(
             StringComparer.InvariantCultureIgnoreCase);
@@ -22,14 +23,19 @@ public static class Csv
         }
     }
 
+    internal static Table GetTable(string csvText)
+    {
+        return CsvParser.GetTable(csvText);
+    }
+
     public static string GetText<TItem>(
         IEnumerable<TItem> items,
         params (string, Func<TItem, object>)[] colInfos)
     {
-        return GetTableFromItems(items, colInfos).ToString();
+        return GetTable(items, colInfos).ToString();
     }
 
-    static Table GetTableFromItems<TItem>(
+    internal static Table GetTable<TItem>(
         IEnumerable<TItem> items,
         params (string, Func<TItem, object>)[] colInfos)
     {
@@ -44,15 +50,16 @@ public static class Csv
         return new Table(rows);
     }
 
-    static void VerifyTable(Table table)
+    internal static void VerifyTable(Table table)
     {
         if (table.Length == 0)
         {
             throw new CsvException("Table has no rows");
         }
 
-        var headers = table.Rows[0].Cells.CastArray<string>();
-        var grouped = headers.GroupBy(h => h).ToArray();
+        var headers = table.Rows[0].Cells.Select(c => c.Text).ToArray();
+        var grouped = headers.GroupBy(h => h,
+            StringComparer.InvariantCultureIgnoreCase).ToArray();
         var dup = grouped.FirstOrDefault(g => g.Count() > 1);
         if (dup is not null)
         {
