@@ -3,8 +3,22 @@ using System.Text.RegularExpressions;
 
 namespace Fmbm.Text;
 
+
 public class Cell
 {
+    const NumberStyles IntStyles =
+        NumberStyles.Integer |
+        NumberStyles.AllowLeadingWhite |
+        NumberStyles.AllowTrailingWhite |
+        NumberStyles.AllowThousands;
+    const NumberStyles FloatStyles =
+        NumberStyles.Float |
+        NumberStyles.AllowLeadingWhite |
+        NumberStyles.AllowTrailingWhite |
+        NumberStyles.AllowThousands;
+
+    static readonly CultureInfo culture = CultureInfo.InvariantCulture;
+
     internal string Text { get; init; }
 
     internal Cell(string text)
@@ -14,38 +28,50 @@ public class Cell
 
     internal static Cell From(object value)
     {
-        var naiveText = value switch
+        string text;
+        switch (value)
         {
-            null => "",
-            string s => s,
-            DateTime dt => dt.ToString("yyyy-MM-dd HH:mm"),
-
-            sbyte n => n.ToString(),
-            byte n => n.ToString(),
-            short n => n.ToString(),
-            int n => n.ToString(),
-            long n => n.ToString(),
-            ushort n => n.ToString(),
-            uint n => n.ToString(),
-            ulong n => n.ToString(),
-            float n => n.ToString(),
-            double n => n.ToString(),
-            decimal n => n.ToString(),
-
-            _ => throw new CsvException(
-                $"Cannot covert {value.GetType().Name} to a CSV value.")
+            case string str:
+                text = str;
+                break;
+            case DateTime dt:
+                text = dt.ToString("yyyy-MM-dd HH:mm");
+                break;
+            case int n:
+                text = n.ToString();
+                break;
+            case uint n:
+                text = n.ToString();
+                break;
+            case long n:
+                text = n.ToString();
+                break;
+            case ulong n:
+                text = n.ToString();
+                break;
+            case float n:
+                text = n.ToString();
+                break;
+            case double n:
+                text = n.ToString();
+                break;
+            case decimal n:
+                text = n.ToString();
+                break;
+            default:
+                throw new CsvException(
+                    $"Cannot covert {value.GetType().Name} to a CSV value.");
         };
-
-        return new Cell(Escape(naiveText));
+        return new Cell(Escape(text));
     }
 
-    static readonly Regex needsEncoding =
+    static readonly Regex needsEscaping =
         new Regex("[,\"\n]", RegexOptions.Compiled);
     internal static string Escape(string naiveText)
     {
         var dq = "\"";
         var dqdq = "\"\"";
-        if (needsEncoding.IsMatch(naiveText))
+        if (needsEscaping.IsMatch(naiveText))
         {
             return $"{dq}{naiveText.Replace(dq, dqdq)}{dq}";
         }
@@ -62,21 +88,42 @@ public class Cell
 
     public static implicit operator DateTime(Cell cell)
     {
-        // if (DateTime.TryParseExact(
-        //     cell.Text,
-        //     "yyyy-MM-dd HH:mm",
-        //     null,
-        //     DateTimeStyles.None,
-        //     out var dt))
-        // {
-        //     return dt;
-        // }
-        return DateTime.Parse(cell.Text);
+        return DateTime.Parse(cell.Text, culture);
     }
 
     public static implicit operator int(Cell cell)
     {
-        return int.Parse(cell.Text, NumberStyles.AllowThousands);
+        return int.Parse(cell.Text, IntStyles, culture);
+    }
+
+    public static implicit operator uint(Cell cell)
+    {
+        return uint.Parse(cell.Text, IntStyles, culture);
+    }
+
+    public static implicit operator long(Cell cell)
+    {
+        return long.Parse(cell.Text, IntStyles, culture);
+    }
+
+    public static implicit operator ulong(Cell cell)
+    {
+        return ulong.Parse(cell.Text, IntStyles, culture);
+    }
+
+    public static implicit operator float(Cell cell)
+    {
+        return float.Parse(cell.Text, FloatStyles, culture);
+    }
+
+    public static implicit operator double(Cell cell)
+    {
+        return double.Parse(cell.Text, FloatStyles, culture);
+    }
+
+    public static implicit operator decimal(Cell cell)
+    {
+        return decimal.Parse(cell.Text, FloatStyles, culture);
     }
 
     public override string ToString()

@@ -1,5 +1,6 @@
 ﻿using Fmbm.Text;
 using Fmbm.IO;
+using System.Globalization;
 
 Console.WriteLine(@"
 
@@ -33,6 +34,8 @@ var csvOut = Csv.GetText(cakes,
 
 new CCFile(outPath).WriteText(csvOut);
 
+// float.Parse("1,234.4568");
+// Console.WriteLine(float.Parse("1234.4568"));
 
 public class Cake
 {
