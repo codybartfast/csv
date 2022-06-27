@@ -174,11 +174,11 @@ public class CsvParserTests
     [Fact]
     public void QuotedTable()
     {
-        var innerText = Cell.Encode(
+        var innerText = Cell.Escape(
             "\"00\",\"01\",\"02\",\"03\"\n"
             + "\"10\",\":-)\",\"12\",\"13\"\n"
             + "\"20\",\"21\",\"22\",\"23\"\n");
-        var middleText = Cell.Encode(
+        var middleText = Cell.Escape(
             "\"00\",\"01\",\"02\",\"03\"\r\n"
             + $"\"10\",{innerText},\"12\",\"13\"\r\n"
             + "\"20\",\"21\",\"22\",\"23\"\r\n");

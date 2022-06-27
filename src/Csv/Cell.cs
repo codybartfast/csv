@@ -36,12 +36,12 @@ public class Cell
                 $"Cannot covert {value.GetType().Name} to a CSV value.")
         };
 
-        return new Cell(Encode(naiveText));
+        return new Cell(Escape(naiveText));
     }
 
     static readonly Regex needsEncoding =
-        new Regex("[,\"\r\n]", RegexOptions.Compiled);
-    internal static string Encode(string naiveText)
+        new Regex("[,\"\n]", RegexOptions.Compiled);
+    internal static string Escape(string naiveText)
     {
         var dq = "\"";
         var dqdq = "\"\"";
