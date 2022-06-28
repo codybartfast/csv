@@ -2,12 +2,11 @@ namespace Fmbm.Text;
 
 public static class Csv
 {
+
     public static IEnumerable<TItem> GetItems<TItem>(
-        string csvText,
-        Func<Func<string, Cell>, TItem> maker)
+        Table table,
+        Func<Func<string, Cell>, TItem> itemMaker)
     {
-        var table = GetTable(csvText);
-        VerifyTable(table);
         var headers = table.Rows[0].Cells.Select(c => c.Text).ToArray();
         var dict = new Dictionary<string, int>(
             StringComparer.InvariantCultureIgnoreCase);
@@ -19,38 +18,54 @@ public static class Csv
         foreach (var row in table.Rows.Skip(1))
         {
             Func<string, Cell> getCell = header => row[getIndex(header)];
-            yield return maker(getCell);
+            yield return itemMaker(getCell);
         }
     }
 
-    internal static Table GetTable(string csvText)
+
+    public static IEnumerable<TItem> GetItems<TItem>(
+        string csvText,
+        Func<Func<string, Cell>, TItem> itemMaker)
+    {
+        var table = GetTable(csvText);
+        VerifyItemTable(table);
+        return GetItems(table, itemMaker);
+    }
+
+    internal static Table GetTable<TItem>(
+            IEnumerable<TItem> items,
+            params (string colName, Func<TItem, object> getColValue)[] colInfos)
+    {
+        var rows = new List<Row>();
+        var headers = colInfos.Select(ci => Cell.From(ci.colName));
+        rows.Add(new Row(headers));
+        foreach (var item in items)
+        {
+            var values = colInfos.Select(ci => ci.getColValue(item));
+            rows.Add(new Row(values.Select(str => Cell.From(str))));
+        }
+        return new Table(rows);
+    }
+
+    public static Table GetTable(string csvText)
     {
         return TextParser.GetTable(csvText);
+    }
+
+    public static string GetText(Table table)
+    {
+        return table.ToCsvText();
     }
 
     public static string GetText<TItem>(
         IEnumerable<TItem> items,
         params (string, Func<TItem, object>)[] colInfos)
     {
-        return GetTable(items, colInfos).ToCsvText();
+        var table = GetTable(items, colInfos);
+        return GetText(table);
     }
 
-    internal static Table GetTable<TItem>(
-        IEnumerable<TItem> items,
-        params (string, Func<TItem, object>)[] colInfos)
-    {
-        var rows = new List<Row>();
-        var headers = colInfos.Select(ci => Cell.From(ci.Item1));
-        rows.Add(new Row(headers));
-        foreach (var item in items)
-        {
-            var values = colInfos.Select(ci => ci.Item2(item));
-            rows.Add(new Row(values.Select(str => Cell.From(str))));
-        }
-        return new Table(rows);
-    }
-
-    internal static void VerifyTable(Table table)
+    public static void VerifyItemTable(Table table)
     {
         if (table.Length == 0)
         {

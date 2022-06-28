@@ -3,7 +3,6 @@ using System.Text.RegularExpressions;
 
 namespace Fmbm.Text;
 
-
 public class Cell
 {
     const NumberStyles IntStyles =
@@ -19,20 +18,21 @@ public class Cell
 
     static readonly CultureInfo culture = CultureInfo.InvariantCulture;
 
-    internal string Text { get; init; }
+    public string Text { get; init; }
 
-    internal Cell(string text)
+    public Cell(string text)
     {
         this.Text = text;
     }
 
-    internal static Cell From(object value)
+    public static Cell From(object value)
     {
-        return
-            TryGetText(value, out var text) ?
-            new Cell(text!) :
+        if (!TryGetText(value, out string? text))
+        {
             throw new CsvException(
-                    $"No implicit conversion between Cell and {value.GetType().Name}.");
+                $"No implicit conversion between Cell and {value.GetType().Name}.");
+        }
+        return new Cell(text!);
     }
 
     internal static Cell FromAny(object value)
@@ -117,20 +117,23 @@ public class Cell
         return decimal.Parse(cell.Text, FloatStyles, culture);
     }
 
-    static readonly Regex needsEscaping =
+    static readonly Regex needsQuoting =
         new Regex("[,\"\n]", RegexOptions.Compiled);
-    internal static string Escape(string naiveText)
+    public static bool NeedsQuoting(string text)
+    {
+        return needsQuoting.IsMatch(text);
+    }
+
+    public static string Quote(string text)
     {
         var dq = "\"";
         var dqdq = "\"\"";
-        if (needsEscaping.IsMatch(naiveText))
-        {
-            return $"{dq}{naiveText.Replace(dq, dqdq)}{dq}";
-        }
-        else
-        {
-            return naiveText;
-        }
+        return $"{dq}{text.Replace(dq, dqdq)}{dq}";
+    }
+
+    public static string QuoteIfNeeded(string text)
+    {
+        return NeedsQuoting(text) ? Quote(text) : text;
     }
 
     public override string ToString()
@@ -140,6 +143,6 @@ public class Cell
 
     public string ToCsvText()
     {
-        return Escape(Text);
+        return QuoteIfNeeded(Text);
     }
 }

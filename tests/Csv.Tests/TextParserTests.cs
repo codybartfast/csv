@@ -174,11 +174,11 @@ public class TextParserTests
     [Fact]
     public void QuotedTable()
     {
-        var innerText = Cell.Escape(
+        var innerText = Cell.QuoteIfNeeded(
             "\"00\",\"01\",\"02\",\"03\"\n"
             + "\"10\",\":-)\",\"12\",\"13\"\n"
             + "\"20\",\"21\",\"22\",\"23\"\n");
-        var middleText = Cell.Escape(
+        var middleText = Cell.QuoteIfNeeded(
             "\"00\",\"01\",\"02\",\"03\"\r\n"
             + $"\"10\",{innerText},\"12\",\"13\"\r\n"
             + "\"20\",\"21\",\"22\",\"23\"\r\n");

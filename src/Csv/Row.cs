@@ -2,11 +2,11 @@ using System.Collections.Immutable;
 
 namespace Fmbm.Text;
 
-class Row
+public class Row
 {
-    internal ImmutableArray<Cell> Cells { get; }
+    public ImmutableArray<Cell> Cells { get; }
 
-    internal Row(IEnumerable<Cell> cells)
+    public Row(IEnumerable<Cell> cells)
     {
         this.Cells = ImmutableArray.Create(cells.ToArray());
     }
