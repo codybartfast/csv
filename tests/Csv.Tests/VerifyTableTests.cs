@@ -13,7 +13,7 @@ public class CsvVerifyTableTests
     [Fact]
     public void MustNotDuplicateHeaders()
     {
-        var table = CsvParser.GetTable("a,b,A");
+        var table = TextParser.GetTable("a,b,A");
         var verify = () => Csv.VerifyTable(table);
         Assert.Throws<CsvException>(verify);
     }
@@ -22,7 +22,7 @@ public class CsvVerifyTableTests
     public void AllRowsMustHaveSameLength()
     {
         var csv = "H1,H2,H3,H4\na,b,c,d\n1,2,3\nA,B,C,D";
-        var table = CsvParser.GetTable(csv);
+        var table = TextParser.GetTable(csv);
         var verify = () => Csv.VerifyTable(table);
         Assert.Throws<CsvException>(verify);
     }

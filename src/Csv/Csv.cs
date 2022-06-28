@@ -25,7 +25,7 @@ public static class Csv
 
     internal static Table GetTable(string csvText)
     {
-        return CsvParser.GetTable(csvText);
+        return TextParser.GetTable(csvText);
     }
 
     public static string GetText<TItem>(

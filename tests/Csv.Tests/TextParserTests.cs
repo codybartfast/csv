@@ -1,11 +1,11 @@
 namespace Fmbm.Text.Tests;
 
-public class CsvParserTests
+public class TextParserTests
 {
     [Fact]
     public void EmptyString_SingleEmptyCell()
     {
-        var table = CsvParser.GetTable("");
+        var table = TextParser.GetTable("");
         Assert.Equal(1, table.Length);
         var row = table[0];
         Assert.Equal(1, row.Length);
@@ -17,7 +17,7 @@ public class CsvParserTests
     public void PlainString_SingleMatchingCell()
     {
         var text = "The quick brown fox.";
-        var table = CsvParser.GetTable(text);
+        var table = TextParser.GetTable(text);
         Assert.Equal(1, table.Length);
         var row = table[0];
         Assert.Equal(1, row.Length);
@@ -29,7 +29,7 @@ public class CsvParserTests
     public void SingleRow()
     {
         var text = "The, quick, brown, fox.";
-        var table = CsvParser.GetTable(text);
+        var table = TextParser.GetTable(text);
         Assert.Equal(1, table.Length);
         var row = table[0];
         Assert.Equal(4, row.Length);
@@ -44,7 +44,7 @@ public class CsvParserTests
     public void SingleCol()
     {
         var text = "The\n quick\n brown\n fox.";
-        var table = CsvParser.GetTable(text);
+        var table = TextParser.GetTable(text);
         Assert.Equal(4, table.Length);
         foreach (var row in table.Rows)
         {
@@ -60,7 +60,7 @@ public class CsvParserTests
     public void EmptyCells()
     {
         var text = ",,,\n,,,\n,,,";
-        var table = CsvParser.GetTable(text);
+        var table = TextParser.GetTable(text);
         Assert.Equal(3, table.Length);
         foreach (var row in table.Rows)
         {
@@ -76,7 +76,7 @@ public class CsvParserTests
     public void BlankCells()
     {
         var text = "   ,   ,   ,   \n   ,   ,   ,   \n   ,   ,   ,   ";
-        var table = CsvParser.GetTable(text);
+        var table = TextParser.GetTable(text);
         Assert.Equal(3, table.Length);
         foreach (var row in table.Rows)
         {
@@ -92,7 +92,7 @@ public class CsvParserTests
     public void FinalNewLine()
     {
         var text = "   ,   ,   ,   \n   ,   ,   ,   \n   ,   ,   ,   \n";
-        var table = CsvParser.GetTable(text);
+        var table = TextParser.GetTable(text);
         Assert.Equal(3, table.Length);
         foreach (var row in table.Rows)
         {
@@ -105,7 +105,7 @@ public class CsvParserTests
     public void CarriageReturnNL()
     {
         var text = "   ,   ,   ,   \r\n   ,   ,   ,   \r\n   ,   ,   ,   \r\n";
-        var table = CsvParser.GetTable(text);
+        var table = TextParser.GetTable(text);
         Assert.Equal(3, table.Length);
         foreach (var row in table.Rows)
         {
@@ -121,7 +121,7 @@ public class CsvParserTests
             "\r \r,\r \r,\r \r,\r \r\r\n"
             + "\r \r,\r \r,\r \r,\r \r\r\n"
             + "\r \r,\r \r,\r \r,\r \r";
-        var table = CsvParser.GetTable(text);
+        var table = TextParser.GetTable(text);
         Assert.Equal(3, table.Length);
         foreach (var row in table.Rows)
         {
@@ -134,7 +134,7 @@ public class CsvParserTests
     public void CorrectOrder()
     {
         var text = "00,01,02,03\n10,11,12,13\n20,21,22,23\n";
-        var table = CsvParser.GetTable(text);
+        var table = TextParser.GetTable(text);
         Assert.Equal(3, table.Length);
         foreach (var row in table.Rows)
         {
@@ -156,7 +156,7 @@ public class CsvParserTests
             "\"00\",\"01\",\"02\",\"03\"\n"
             + "\"10\",\"11\",\"12\",\"13\"\n"
             + "\"20\",\"21\",\"22\",\"23\"\n";
-        var table = CsvParser.GetTable(text);
+        var table = TextParser.GetTable(text);
         Assert.Equal(3, table.Length);
         foreach (var row in table.Rows)
         {
@@ -186,11 +186,11 @@ public class CsvParserTests
             "\"00\",\"01\",\"02\",\"03\"\n"
             + $"\"10\",{middleText},\"12\",\"13\"\n"
             + "\"20\",\"21\",\"22\",\"23\"\n";
-        var outerTable = CsvParser.GetTable(outerText);
+        var outerTable = TextParser.GetTable(outerText);
         Check(outerTable);
-        var middleTable = CsvParser.GetTable(outerTable[1][1]);
+        var middleTable = TextParser.GetTable(outerTable[1][1]);
         Check(middleTable);
-        var innerTable = CsvParser.GetTable(middleTable[1][1]);
+        var innerTable = TextParser.GetTable(middleTable[1][1]);
         Check(innerTable, ":-)");
 
         void Check(Table table, string? value1_1 = null)
@@ -226,7 +226,7 @@ public class CsvParserTests
             " \"00\"  ,  \"01\"  ,  \"02\"  ,  \"03\"  \n"
             + " \"10\"  ,   \"11\"  ,   \"12\"  ,   \"13\"  \r\n"
             + "     \"20\"  ,  \r  \"21\"  ,  \r\"22\"   ,  \"23\"\r   \n";
-        var table = CsvParser.GetTable(text);
+        var table = TextParser.GetTable(text);
         Assert.Equal(3, table.Length);
         foreach (var row in table.Rows)
         {
@@ -245,11 +245,11 @@ public class CsvParserTests
     public void ThrowOnBadQuoted()
     {
         var bText = "The,  X  \" quick\"  , brown, fox.";
-        Action charBeforeQuoted = () => CsvParser.GetTable(bText);
+        Action charBeforeQuoted = () => TextParser.GetTable(bText);
         Assert.Throws<CsvParseException>(charBeforeQuoted);
 
         var aText = "The,  \" quick\"  Y  , brown, fox.";
-        Action charAfterQuoted = () => CsvParser.GetTable(aText);
+        Action charAfterQuoted = () => TextParser.GetTable(aText);
         Assert.Throws<CsvParseException>(charAfterQuoted);
     }
 }
