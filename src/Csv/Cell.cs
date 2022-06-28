@@ -28,41 +28,48 @@ public class Cell
 
     internal static Cell From(object value)
     {
-        string text;
+        return
+            TryGetText(value, out var text) ?
+            new Cell(text!) :
+            throw new CsvException(
+                    $"No implicit conversion between Cell and {value.GetType().Name}.");
+    }
+
+    internal static Cell FromAny(object value)
+    {
+        if (!TryGetText(value, out string? text))
+        {
+            text = value is not null ? value.ToString() : string.Empty;
+        }
+        return new Cell(text!);
+    }
+
+    static bool TryGetText(object value, out string? text)
+    {
         switch (value)
         {
+            case null:
+                text = String.Empty;
+                return true;
             case string str:
                 text = str;
-                break;
+                return true;
             case DateTime dt:
                 text = dt.ToString("yyyy-MM-dd HH:mm");
-                break;
-            case int n:
-                text = n.ToString();
-                break;
-            case uint n:
-                text = n.ToString();
-                break;
-            case long n:
-                text = n.ToString();
-                break;
-            case ulong n:
-                text = n.ToString();
-                break;
-            case float n:
-                text = n.ToString();
-                break;
-            case double n:
-                text = n.ToString();
-                break;
-            case decimal n:
-                text = n.ToString();
-                break;
+                return true;
+            case int:
+            case uint:
+            case long:
+            case ulong:
+            case float:
+            case double:
+            case decimal:
+                text = value.ToString();
+                return true;
             default:
-                throw new CsvException(
-                    $"Cannot covert {value.GetType().Name} to a CSV value.");
+                text = null;
+                return false;
         };
-        return new Cell(text);
     }
 
     public static implicit operator string(Cell cell)

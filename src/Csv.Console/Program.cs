@@ -2,12 +2,7 @@
 using Fmbm.IO;
 using System.Globalization;
 
-Console.WriteLine(@"
-
-More numeric conversions
-Sample (external) converter.
-
-Hello, World!");
+Console.WriteLine(@"Hello, World!");
 
 var dir = DirPaths.AppRoot.CheckedPath;
 var inPath = Path.Combine(dir, "cakeIn.csv");

@@ -57,7 +57,7 @@ public class CellTests
     }
 
     [Fact]
-    public void StupidAmericanStyleDate()
+    public void DaftAmericanStyleDate()
     {
         var date = DateTime.Parse("2002-03-04");
         Assert.Equal(date, Cell.From("03/04/02"));
@@ -130,5 +130,20 @@ public class CellTests
         Assert.Equal(m, Cell.From(" 1234.567 "));
         Assert.Equal(-m, Cell.From(" -1,234.567 "));
         Assert.Equal(-m, Cell.From(" -01.2345670E+3 "));
+    }
+
+    [Fact]
+    public void From_UnknownType_Exception()
+    {
+        byte b = 255;
+        Action fromUnknown = () => byte.Parse(Cell.From(b));
+        Assert.Throws<CsvException>(fromUnknown);
+    }
+
+    [Fact]
+    public void FromAny_UnknownType_ToString()
+    {
+        byte b = 255;
+        Assert.Equal(b, byte.Parse(Cell.FromAny(b)));
     }
 }
