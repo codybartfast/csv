@@ -33,9 +33,29 @@ public class CellTests
         Assert.Equal(m, Cell.From(m));
     }
 
+
     [Fact]
-    public void Parseing(){
-        var date = DateTime.Parse("2002-03-04");
-        Assert.Equal(date, Cell.From("04/03/02"));
+    public void NastyString(){
+        // more compresenisve tests in CsvParserTests
+        var text = "\r \" \",\" ,, \"\"\r\"";
+        Assert.Equal(text, Cell.From(text));
     }
+
+    [Fact]
+    public void SortableDateTime(){
+        var date = DateTime.Parse("2002-03-04T05:06Z");
+        Assert.Equal(date, Cell.From("2002-03-04 5:06"));
+    }
+
+    [Fact]
+    public void SortableDate(){
+        var date = DateTime.Parse("2002-03-04");
+        Assert.Equal(date, Cell.From("2002-03-04"));
+    }
+
+    [Fact]
+    public void StupidAmericanStyleDate(){
+        var date = DateTime.Parse("2002-03-04");
+        Assert.Equal(date, Cell.From("03/04/02"));
+    }    
 }

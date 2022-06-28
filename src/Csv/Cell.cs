@@ -62,23 +62,7 @@ public class Cell
                 throw new CsvException(
                     $"Cannot covert {value.GetType().Name} to a CSV value.");
         };
-        return new Cell(Escape(text));
-    }
-
-    static readonly Regex needsEscaping =
-        new Regex("[,\"\n]", RegexOptions.Compiled);
-    internal static string Escape(string naiveText)
-    {
-        var dq = "\"";
-        var dqdq = "\"\"";
-        if (needsEscaping.IsMatch(naiveText))
-        {
-            return $"{dq}{naiveText.Replace(dq, dqdq)}{dq}";
-        }
-        else
-        {
-            return naiveText;
-        }
+        return new Cell(text);
     }
 
     public static implicit operator string(Cell cell)
@@ -126,8 +110,29 @@ public class Cell
         return decimal.Parse(cell.Text, FloatStyles, culture);
     }
 
+    static readonly Regex needsEscaping =
+        new Regex("[,\"\n]", RegexOptions.Compiled);
+    internal static string Escape(string naiveText)
+    {
+        var dq = "\"";
+        var dqdq = "\"\"";
+        if (needsEscaping.IsMatch(naiveText))
+        {
+            return $"{dq}{naiveText.Replace(dq, dqdq)}{dq}";
+        }
+        else
+        {
+            return naiveText;
+        }
+    }
+
     public override string ToString()
     {
         return Text;
+    }
+
+    public string ToCsvText()
+    {
+        return Escape(Text);
     }
 }

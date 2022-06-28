@@ -19,4 +19,9 @@ class Table
     {
         return String.Join("\r\n", Rows);
     }
+
+    public string ToCsvText()
+    {
+        return String.Join("\r\n", Rows.Select(r => r.ToCsvText()));
+    }
 }

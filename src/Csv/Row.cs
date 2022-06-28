@@ -19,4 +19,9 @@ class Row
     {
         return String.Join(",", Cells);
     }
+
+    public string ToCsvText()
+    {
+        return String.Join(",", Cells.Select(c => c.ToCsvText()));
+    }
 }

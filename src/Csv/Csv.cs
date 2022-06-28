@@ -32,7 +32,7 @@ public static class Csv
         IEnumerable<TItem> items,
         params (string, Func<TItem, object>)[] colInfos)
     {
-        return GetTable(items, colInfos).ToString();
+        return GetTable(items, colInfos).ToCsvText();
     }
 
     internal static Table GetTable<TItem>(
