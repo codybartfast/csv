@@ -25,24 +25,25 @@ public class Cell
         this.Text = text;
     }
 
-    public static Cell From(object value)
+    public Cell(DateTime dt)
     {
-        if (!TryGetText(value, out string? text))
-        {
-            throw new CsvException(
-                $"No implicit conversion between Cell and {value.GetType().Name}.");
-        }
-        return new Cell(text!);
+        this.Text = dt.ToString("yyyy-MM-dd HH:mm");
     }
 
-    internal static Cell FromAny(object value)
+    public Cell(object o)
     {
-        if (!TryGetText(value, out string? text))
-        {
-            text = value is not null ? value.ToString() : string.Empty;
-        }
-        return new Cell(text!);
+        this.Text = (o?.ToString()) ?? String.Empty;
     }
+
+    // public static Cell From(object value)
+    // {
+    //     return new Cell(value);
+    // }
+
+    // internal static Cell FromAny(object value)
+    // {
+    //     return new Cell(value);
+    // }
 
     static bool TryGetText(object value, out string? text)
     {

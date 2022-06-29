@@ -37,12 +37,12 @@ public static class Csv
             params (string colName, Func<TItem, object> getColValue)[] colInfos)
     {
         var rows = new List<Row>();
-        var headers = colInfos.Select(ci => Cell.From(ci.colName));
+        var headers = colInfos.Select(ci => new Cell(ci.colName));
         rows.Add(new Row(headers));
         foreach (var item in items)
         {
             var values = colInfos.Select(ci => ci.getColValue(item));
-            rows.Add(new Row(values.Select(str => Cell.From(str))));
+            rows.Add(new Row(values.Select(str => new Cell(str))));
         }
         return new Table(rows);
     }

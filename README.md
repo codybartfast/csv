@@ -7,4 +7,4 @@ pass a function for di
 Custom converters, percent, culture!
 scientific
 null & "" -> ""
-From / FromAnu
+From / FromAny

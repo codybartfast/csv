@@ -4,20 +4,24 @@ namespace Fmbm.Text;
 
 public class Row
 {
-    public ImmutableArray<Cell> Cells { get; }
+    public Cell[] Cells { get; }
 
     public Row(IEnumerable<Cell> cells)
     {
-        this.Cells = ImmutableArray.Create(cells.ToArray());
+        this.Cells = cells.ToArray();
     }
 
     public int Length => Cells.Length;
 
-    public Cell this[int idx] => Cells[idx];
+    public Cell this[int idx]
+    {
+        get => Cells[idx];
+        set => Cells[idx] = value;
+    }
 
     public override string ToString()
     {
-        return String.Join(",", Cells);
+        return String.Join(",", Cells.Select(c => c.ToString()));
     }
 
     public string ToCsvText()
