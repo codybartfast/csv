@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Fmbm.Text;
 
-public class Cell
+public partial class Cell
 {
     const NumberStyles IntStyles =
         NumberStyles.Integer |
@@ -32,45 +32,19 @@ public class Cell
 
     public Cell(object o)
     {
-        this.Text = (o?.ToString()) ?? String.Empty;
+        switch (o)
+        {
+            case DateTime dt:
+                this.Text = dt.ToString("yyyy-MM-dd HH:mm");
+                break;
+            default:
+                this.Text = (o?.ToString()) ?? String.Empty;
+                break;
+        }
     }
 
-    // public static Cell From(object value)
-    // {
-    //     return new Cell(value);
-    // }
-
-    // internal static Cell FromAny(object value)
-    // {
-    //     return new Cell(value);
-    // }
-
-    static bool TryGetText(object value, out string? text)
-    {
-        switch (value)
-        {
-            case null:
-                text = String.Empty;
-                return true;
-            case string str:
-                text = str;
-                return true;
-            case DateTime dt:
-                text = dt.ToString("yyyy-MM-dd HH:mm");
-                return true;
-            case int:
-            case uint:
-            case long:
-            case ulong:
-            case float:
-            case double:
-            case decimal:
-                text = value.ToString();
-                return true;
-            default:
-                text = null;
-                return false;
-        };
+    public static implicit operator Cell(string text){
+        return new Cell(text);
     }
 
     public static implicit operator string(Cell cell)
@@ -83,9 +57,17 @@ public class Cell
         return DateTime.Parse(cell.Text, culture);
     }
 
+    public static implicit operator Cell(DateTime dt){
+        return new Cell(dt);
+    }
+
     public static implicit operator int(Cell cell)
     {
         return int.Parse(cell.Text, IntStyles, culture);
+    }
+
+    public static implicit operator Cell(int n){
+        return new Cell(n);
     }
 
     public static implicit operator uint(Cell cell)
@@ -93,9 +75,17 @@ public class Cell
         return uint.Parse(cell.Text, IntStyles, culture);
     }
 
+    public static implicit operator Cell(uint n){
+        return new Cell(n);
+    }
+
     public static implicit operator long(Cell cell)
     {
         return long.Parse(cell.Text, IntStyles, culture);
+    }
+
+    public static implicit operator Cell(long n){
+        return new Cell(n);
     }
 
     public static implicit operator ulong(Cell cell)
@@ -103,9 +93,17 @@ public class Cell
         return ulong.Parse(cell.Text, IntStyles, culture);
     }
 
+    public static implicit operator Cell(ulong n){
+        return new Cell(n);
+    }
+
     public static implicit operator float(Cell cell)
     {
         return float.Parse(cell.Text, FloatStyles, culture);
+    }
+
+    public static implicit operator Cell(float n){
+        return new Cell(n);
     }
 
     public static implicit operator double(Cell cell)
@@ -113,10 +111,19 @@ public class Cell
         return double.Parse(cell.Text, FloatStyles, culture);
     }
 
+    public static implicit operator Cell(double n){
+        return new Cell(n);
+    }
+
     public static implicit operator decimal(Cell cell)
     {
         return decimal.Parse(cell.Text, FloatStyles, culture);
     }
+
+    public static implicit operator Cell(decimal n){
+        return new Cell(n);
+    }
+
 
     static readonly Regex needsQuoting =
         new Regex("[,\"\n]", RegexOptions.Compiled);
