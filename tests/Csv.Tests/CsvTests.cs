@@ -14,11 +14,11 @@ public class CsvTests
         var nums = new decimal[] { 1.234m };
 
         var usText = Csv.GetText(nums, usClt, ("Number", n => n));
-        var usValText = usText.Split('\n')[1];
+        var usValText = Regex.Split(usText, "\r?\n")[1];
         Assert.Equal("1.234", usValText);
 
         var frText = Csv.GetText(nums, frClt, ("Number", n => n));
-        var frValText = frText.Split('\n')[1];
+        var frValText = Regex.Split(frText, "\r?\n")[1];
         Assert.Equal("\"1,234\"", frValText);
     }
 
