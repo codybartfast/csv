@@ -30,6 +30,41 @@ public partial class Cell
         this.Text = dt.ToString("yyyy-MM-dd HH:mm");
     }
 
+    public Cell(int n)
+    {
+        this.Text = n.ToString(culture);
+    }
+
+    public Cell(uint n)
+    {
+        this.Text = n.ToString(culture);
+    }
+
+    public Cell(long n)
+    {
+        this.Text = n.ToString(culture);
+    }
+
+    public Cell(ulong n)
+    {
+        this.Text = n.ToString(culture);
+    }
+
+    public Cell(float n)
+    {
+        this.Text = n.ToString(culture);
+    }
+
+    public Cell(double n)
+    {
+        this.Text = n.ToString(culture);
+    }
+
+    public Cell(decimal n)
+    {
+        this.Text = n.ToString(culture);
+    }
+
     public Cell(object o)
     {
         switch (o)
@@ -124,7 +159,6 @@ public partial class Cell
         return new Cell(n);
     }
 
-
     static readonly Regex needsQuoting =
         new Regex("[,\"\n]", RegexOptions.Compiled);
     public static bool NeedsQuoting(string text)
@@ -144,13 +178,13 @@ public partial class Cell
         return NeedsQuoting(text) ? Quote(text) : text;
     }
 
-    public override string ToString()
-    {
-        return Text;
-    }
-
     public string ToCsvText()
     {
         return QuoteIfNeeded(Text);
+    }
+
+    public override string ToString()
+    {
+        return Text;
     }
 }

@@ -8,3 +8,4 @@ Custom converters, percent, culture!
 scientific
 null & "" -> ""
 From / FromAny
+culture - invarient limited testing
