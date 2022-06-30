@@ -1,6 +1,7 @@
-﻿using Fmbm.Text;
+﻿using System.Globalization;
+
+using Fmbm.Text;
 using Fmbm.IO;
-using System.Globalization;
 
 Console.WriteLine(@"Hello, World!");
 
@@ -16,21 +17,26 @@ var episodes = Csv.GetItems(csvTextIn, row =>
         NumInSeason = row("No. in season"),
         Title = row("Title"),
         OriginalAirDate = row("Original air date"),
-        USViewersMillions = row("U.S. viewers (millions)")
+        USViewers = row("U.S. viewers")
     }).ToArray();
 
 var byOverall = episodes.OrderBy(ep => ep.NumOverall).ToArray();
 
 var csvTextOut = Csv.GetText(byOverall,
-    ("Id", e => e.NumOverall),
+    ("No.", e => e.NumOverall),
     ("Title", e => e.Title.Trim('"')),
     ("Original Air Date", e => e.OriginalAirDate),
-    ("US Viewers (M)", e => e.USViewersMillions));
+    ("US Viewers (M)", e => Math.Round((e.USViewers / 1000000), 2)));
 
-new CCFile(outPath).WriteText(csvTextOut);
+var csvTextOutFr = Csv.GetText(byOverall, CultureInfo.GetCultureInfo("fr-FR"),
+    ("No.", e => e.NumOverall),
+    ("Title", e => e.Title.Trim('"')),
+    ("Original Air Date", e => e.OriginalAirDate),
+    ("US Viewers (M)", e => Math.Round((e.USViewers / 1000000), 2)));
 
 Console.WriteLine(csvTextIn);
 Console.WriteLine(csvTextOut);
+Console.WriteLine(csvTextOutFr);
 
 class Episode
 {
@@ -38,5 +44,5 @@ class Episode
     public int NumInSeason { get; set; }
     public string? Title { get; set; }
     public DateTime OriginalAirDate { get; set; }
-    public decimal USViewersMillions { get; set; }
+    public decimal USViewers { get; set; }
 }

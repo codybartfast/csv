@@ -1,7 +1,18 @@
+using System.Text;
+
 namespace Fmbm.Text;
 
 public class Table
 {
+    static string JoinPlusSeparator(string sep, IEnumerable<string> strings){
+        var sb = new StringBuilder();
+        foreach(var str in strings){
+            sb.Append(str);
+            sb.Append(sep);
+        }
+        return sb.ToString();
+    }
+
     public const string NewLine = "\n";
 
     public List<Row> Rows { get; }
@@ -21,11 +32,11 @@ public class Table
 
     public override string ToString()
     {
-        return String.Join(NewLine, Rows.Select(r => r.ToString()));
+        return JoinPlusSeparator(NewLine, Rows.Select(r => r.ToString()));
     }
 
     public string ToCsvText()
     {
-        return String.Join(NewLine, Rows.Select(r => r.ToCsvText()));
+        return JoinPlusSeparator(NewLine, Rows.Select(r => r.ToCsvText()));
     }
 }
