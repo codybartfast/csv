@@ -206,7 +206,8 @@ public class TextParserTests
                 {
                     if (c == 1 && r == 1)
                     {
-                        if(value1_1 != null){
+                        if (value1_1 != null)
+                        {
                             Assert.Equal(value1_1, table[1][1]);
                         }
                     }

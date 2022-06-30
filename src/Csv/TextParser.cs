@@ -1,35 +1,45 @@
+using System.Globalization;
+
 namespace Fmbm.Text;
 
 internal class TextParser
 {
+    static CultureInfo DefaultCulture = Cell.DefaultCulture;
+
     const char doubleQuote = '"';
 
     public static Table GetTable(string text)
     {
+        return GetTable(text, DefaultCulture);
+    }
+
+    public static Table GetTable(string text, CultureInfo culture)
+    {
         var reader = new CharReader(text);
-        var rows = ReadRows(reader);
+        var rows = ReadRows(reader, culture);
         return new Table(rows);
     }
 
-    static IEnumerable<Row> ReadRows(CharReader reader)
+    static IEnumerable<Row> ReadRows(CharReader reader, CultureInfo culture)
     {
         do
         {
-            var cells = ReadCells(reader);
+            var cells = ReadCells(reader, culture);
             yield return new Row(cells);
         } while (!reader.AtEnd);
     }
 
-    static IEnumerable<Cell> ReadCells(CharReader reader)
+    static IEnumerable<Cell> ReadCells(CharReader reader, CultureInfo culture)
     {
         bool endOfRow;
         do
         {
-            yield return ReadCell(reader, out endOfRow);
+            yield return ReadCell(reader, culture, out endOfRow);
         } while (!endOfRow);
     }
 
-    static Cell ReadCell(CharReader reader, out bool endOfRow)
+    static Cell ReadCell(
+        CharReader reader, CultureInfo culture, out bool endOfRow)
     {
         var chars = new List<char>();
         char c;
@@ -93,7 +103,7 @@ internal class TextParser
         Cell Cell()
         {
             var text = new String(chars.ToArray());
-            return new Cell(text);
+            return new Cell(text, culture);
         }
     }
 

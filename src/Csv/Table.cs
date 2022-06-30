@@ -2,7 +2,7 @@ namespace Fmbm.Text;
 
 public class Table
 {
-    public const string NewLine = "\r\n";
+    public const string NewLine = "\n";
 
     public List<Row> Rows { get; }
 

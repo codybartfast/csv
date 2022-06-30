@@ -1,7 +1,17 @@
+using System.Globalization;
+
 namespace Fmbm.Text;
 
 public static class Csv
 {
+    static public CultureInfo DefaultCulture { get; } = Cell.DefaultCulture;
+
+    // public static IEnumerable<TItem> GetItems<TItem>(
+    //     Table table,
+    //     Func<Func<string, Cell>, TItem> itemMaker)
+    // {
+    //     return GetItems(table, DefaultCulture, itemMaker);
+    // }
 
     public static IEnumerable<TItem> GetItems<TItem>(
         Table table,
@@ -22,34 +32,55 @@ public static class Csv
         }
     }
 
-
     public static IEnumerable<TItem> GetItems<TItem>(
         string csvText,
         Func<Func<string, Cell>, TItem> itemMaker)
     {
-        var table = GetTable(csvText);
+        return GetItems(csvText, DefaultCulture, itemMaker);
+    }
+
+
+    public static IEnumerable<TItem> GetItems<TItem>(
+        string csvText,
+        CultureInfo culture,
+        Func<Func<string, Cell>, TItem> itemMaker)
+    {
+        var table = GetTable(csvText, culture);
         VerifyItemTable(table);
         return GetItems(table, itemMaker);
     }
 
     internal static Table GetTable<TItem>(
+        IEnumerable<TItem> items,
+        params (string colName, Func<TItem, object> getColValue)[] colInfos)
+    {
+        return GetTable(items, DefaultCulture, colInfos);
+    }
+
+    internal static Table GetTable<TItem>(
             IEnumerable<TItem> items,
+            CultureInfo culture,
             params (string colName, Func<TItem, object> getColValue)[] colInfos)
     {
         var rows = new List<Row>();
-        var headers = colInfos.Select(ci => new Cell(ci.colName));
+        var headers = colInfos.Select(ci => new Cell(ci.colName, culture));
         rows.Add(new Row(headers));
         foreach (var item in items)
         {
             var values = colInfos.Select(ci => ci.getColValue(item));
-            rows.Add(new Row(values.Select(str => new Cell(str))));
+            rows.Add(new Row(values.Select(str => new Cell(str, culture))));
         }
         return new Table(rows);
     }
 
     public static Table GetTable(string csvText)
     {
-        return TextParser.GetTable(csvText);
+        return GetTable(csvText, DefaultCulture);
+    }
+
+    public static Table GetTable(string csvText, CultureInfo culture)
+    {
+        return TextParser.GetTable(csvText, culture);
     }
 
     public static string GetText(Table table)
@@ -61,7 +92,15 @@ public static class Csv
         IEnumerable<TItem> items,
         params (string, Func<TItem, object>)[] colInfos)
     {
-        var table = GetTable(items, colInfos);
+        return GetText(items, DefaultCulture, colInfos);
+    }
+
+    public static string GetText<TItem>(
+        IEnumerable<TItem> items,
+        CultureInfo culture,
+        params (string, Func<TItem, object>)[] colInfos)
+    {
+        var table = GetTable(items, culture, colInfos);
         return GetText(table);
     }
 

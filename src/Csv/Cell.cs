@@ -16,57 +16,63 @@ public partial class Cell
         NumberStyles.AllowTrailingWhite |
         NumberStyles.AllowThousands;
 
-    static readonly CultureInfo culture = CultureInfo.InvariantCulture;
+    internal static CultureInfo DefaultCulture { get; } =
+        CultureInfo.CurrentCulture;
 
     public string Text { get; init; }
+    public CultureInfo Culture { get; init; }
 
-    public Cell(string text)
-    {
-        this.Text = text;
-    }
+    // public Cell(string text, CultureInfo culture)
+    // {
+    //     this.Text = text;
+    // }
 
-    public Cell(DateTime dt)
-    {
-        this.Text = dt.ToString("yyyy-MM-dd HH:mm");
-    }
+    // public Cell(DateTime dt, CultureInfo culture)
+    // {
+    //     this.Text = dt.ToString("yyyy-MM-dd HH:mm");
+    // }
 
-    public Cell(int n)
-    {
-        this.Text = n.ToString(culture);
-    }
+    // public Cell(int n, CultureInfo culture)
+    // {
+    //     this.Text = n.ToString(culture);
+    // }
 
-    public Cell(uint n)
-    {
-        this.Text = n.ToString(culture);
-    }
+    // public Cell(uint n, CultureInfo culture)
+    // {
+    //     this.Text = n.ToString(culture);
+    // }
 
-    public Cell(long n)
-    {
-        this.Text = n.ToString(culture);
-    }
+    // public Cell(long n, CultureInfo culture)
+    // {
+    //     this.Text = n.ToString(culture);
+    // }
 
-    public Cell(ulong n)
-    {
-        this.Text = n.ToString(culture);
-    }
+    // public Cell(ulong n, CultureInfo culture)
+    // {
+    //     this.Text = n.ToString(culture);
+    // }
 
-    public Cell(float n)
-    {
-        this.Text = n.ToString(culture);
-    }
+    // public Cell(float n)
+    // {
+    //     this.Text = n.ToString(culture);
+    // }
 
-    public Cell(double n)
-    {
-        this.Text = n.ToString(culture);
-    }
+    // public Cell(double n)
+    // {
+    //     this.Text = n.ToString(culture);
+    // }
 
-    public Cell(decimal n)
-    {
-        this.Text = n.ToString(culture);
-    }
+    // public Cell(decimal n)
+    // {
+    //     this.Text = n.ToString(culture);
+    // }
 
-    public Cell(object o)
+    public Cell(object o) : this(o, DefaultCulture) { }
+
+    public Cell(object o, CultureInfo culture)
     {
+        this.Culture = culture;
+
         switch (o)
         {
             case string text:
@@ -114,7 +120,7 @@ public partial class Cell
 
     public static implicit operator DateTime(Cell cell)
     {
-        return DateTime.Parse(cell.Text, culture);
+        return DateTime.Parse(cell.Text, cell.Culture);
     }
 
     // public static implicit operator Cell(DateTime dt)
@@ -124,7 +130,7 @@ public partial class Cell
 
     public static implicit operator int(Cell cell)
     {
-        return int.Parse(cell.Text, IntStyles, culture);
+        return int.Parse(cell.Text, IntStyles, cell.Culture);
     }
 
     // public static implicit operator Cell(int n)
@@ -134,7 +140,7 @@ public partial class Cell
 
     public static implicit operator uint(Cell cell)
     {
-        return uint.Parse(cell.Text, IntStyles, culture);
+        return uint.Parse(cell.Text, IntStyles, cell.Culture);
     }
 
     // public static implicit operator Cell(uint n)
@@ -144,7 +150,7 @@ public partial class Cell
 
     public static implicit operator long(Cell cell)
     {
-        return long.Parse(cell.Text, IntStyles, culture);
+        return long.Parse(cell.Text, IntStyles, cell.Culture);
     }
 
     // public static implicit operator Cell(long n)
@@ -154,7 +160,7 @@ public partial class Cell
 
     public static implicit operator ulong(Cell cell)
     {
-        return ulong.Parse(cell.Text, IntStyles, culture);
+        return ulong.Parse(cell.Text, IntStyles, cell.Culture);
     }
 
     // public static implicit operator Cell(ulong n)
@@ -164,7 +170,7 @@ public partial class Cell
 
     public static implicit operator float(Cell cell)
     {
-        return float.Parse(cell.Text, FloatStyles, culture);
+        return float.Parse(cell.Text, FloatStyles, cell.Culture);
     }
 
     // public static implicit operator Cell(float n)
@@ -174,7 +180,7 @@ public partial class Cell
 
     public static implicit operator double(Cell cell)
     {
-        return double.Parse(cell.Text, FloatStyles, culture);
+        return double.Parse(cell.Text, FloatStyles, cell.Culture);
     }
 
     // public static implicit operator Cell(double n)
@@ -184,7 +190,7 @@ public partial class Cell
 
     public static implicit operator decimal(Cell cell)
     {
-        return decimal.Parse(cell.Text, FloatStyles, culture);
+        return decimal.Parse(cell.Text, FloatStyles, cell.Culture);
     }
 
     // public static implicit operator Cell(decimal n)
