@@ -132,22 +132,22 @@ public class CellTests
         Assert.Equal<decimal>(-m, new Cell(" -01.2345670E+3 "));
     }
 
-    [Fact]
-    public void ExplicitCastsToCell()
-    {
-        Assert.Equal("Quick brown fox", ((Cell)"Quick brown fox").ToString());
-        Assert.Equal("2022-06-29 10:34",
-            ((Cell)DateTime.Parse("2022-06-29T10:34:30")).ToString());
+    // [Fact]
+    // public void ExplicitCastsToCell()
+    // {
+    //     Assert.Equal("Quick brown fox", ((Cell)"Quick brown fox").ToString());
+    //     Assert.Equal("2022-06-29 10:34",
+    //         ((Cell)DateTime.Parse("2022-06-29T10:34:30")).ToString());
 
-        Assert.Equal<int>(new Cell(1234), (Cell)1234);
-        Assert.Equal<uint>(new Cell(1234u), (Cell)1234u);
-        Assert.Equal<long>(new Cell(1234L), (Cell)1234L);
-        Assert.Equal<ulong>(new Cell(1234), (Cell)1234ul);
+    //     Assert.Equal<int>(new Cell(1234), (Cell)1234);
+    //     Assert.Equal<uint>(new Cell(1234u), (Cell)1234u);
+    //     Assert.Equal<long>(new Cell(1234L), (Cell)1234L);
+    //     Assert.Equal<ulong>(new Cell(1234), (Cell)1234ul);
 
-        Assert.Equal<float>(new Cell(1234.567f), (Cell)1234.567f);
-        Assert.Equal<double>(new Cell(1234.567), (Cell)1234.567);
-        Assert.Equal<decimal>(new Cell(1234.567m), (Cell)1234.567m);
-    }
+    //     Assert.Equal<float>(new Cell(1234.567f), (Cell)1234.567f);
+    //     Assert.Equal<double>(new Cell(1234.567), (Cell)1234.567);
+    //     Assert.Equal<decimal>(new Cell(1234.567m), (Cell)1234.567m);
+    // }
 
     [Fact]
     public void FromAny_UnknownType_ToString()
