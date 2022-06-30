@@ -84,7 +84,7 @@ public static class Csv
         var width = headers.Length;
         for (int i = 0; i < table.Length; i++)
         {
-            var rowWidth = table[i].Cells.Length;
+            var rowWidth = table[i].Length;
             if (rowWidth != width)
             {
                 throw new CsvException(
