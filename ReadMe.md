@@ -34,3 +34,4 @@ culture - invarient limited testing
 why fmbm - two projects, old style, proven
 thought of publishing -> quality
 readme -> usage -> features
+Anonymous Types
