@@ -29,7 +29,6 @@ string csvTextOut = Csv.GetText(episodes,
     ("Original Air Date", ep => ep.OriginalAirDate),
     ("US Viewers", ep => ep.USViewers));
 
-
 var csvTextOutFr = Csv.GetText(byOverall, CultureInfo.GetCultureInfo("fr-FR"),
     ("No.", e => e.NumOverall),
     ("Title", e => e.Title.Trim('"')),

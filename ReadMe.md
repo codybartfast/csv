@@ -98,10 +98,17 @@ No. Overall,No. In Season,Title,Original Air Date,US Viewers
 21,4,The Griffin Equivalency,2008-10-13 00:00,9356497
 ```
 
-COL INFO
+`Csv.GetText<TItem>` takes the `items` to be translated and an arbitrary number
+of tuples that describe each column of the CSV text.  The tuple comprises the
+header for the column and a function that gets the value for that column for a
+given item. The full type is `(string header, Func<TItem, object> getValue)`.
+In the example above.  The first column info is `("No. Overall", ep =>
+ep.NumOverall)`.  That is, the header of the first column is `"No. Overall"` and
+its value is obtained form the `NumOverall` property.
 
 CLASS
 
+CELL
 
 
 

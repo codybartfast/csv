@@ -46,22 +46,22 @@ public static class Csv
 
     internal static Table GetTable<TItem>(
         IEnumerable<TItem> items,
-        params (string colName, Func<TItem, object> getColValue)[] colInfos)
+        params (string header, Func<TItem, object> getValue)[] columnInfos)
     {
-        return GetTable(items, DefaultCulture, colInfos);
+        return GetTable(items, DefaultCulture, columnInfos);
     }
 
     internal static Table GetTable<TItem>(
             IEnumerable<TItem> items,
             CultureInfo culture,
-            params (string colName, Func<TItem, object> getColValue)[] colInfos)
+            params (string header, Func<TItem, object> getValue)[] columnInfos)
     {
         var rows = new List<Row>();
-        var headers = colInfos.Select(ci => new Cell(ci.colName, culture));
+        var headers = columnInfos.Select(ci => new Cell(ci.header, culture));
         rows.Add(new Row(headers));
         foreach (var item in items)
         {
-            var values = colInfos.Select(ci => ci.getColValue(item));
+            var values = columnInfos.Select(ci => ci.getValue(item));
             rows.Add(new Row(values.Select(str => new Cell(str, culture))));
         }
         return new Table(rows);
@@ -84,17 +84,17 @@ public static class Csv
 
     public static string GetText<TItem>(
         IEnumerable<TItem> items,
-        params (string, Func<TItem, object>)[] colInfos)
+        params (string, Func<TItem, object>)[] columnInfos)
     {
-        return GetText(items, DefaultCulture, colInfos);
+        return GetText(items, DefaultCulture, columnInfos);
     }
 
     public static string GetText<TItem>(
         IEnumerable<TItem> items,
         CultureInfo culture,
-        params (string, Func<TItem, object>)[] colInfos)
+        params (string, Func<TItem, object>)[] columnInfos)
     {
-        var table = GetTable(items, culture, colInfos);
+        var table = GetTable(items, culture, columnInfos);
         return GetText(table);
     }
 
