@@ -31,14 +31,14 @@ Contents
 --------
 
 [Basic Usage](#basic-usage)  
-  [Creating Objects from CSV Text](#creating-objects-from-csv-text)
-  [Creating CSV Text from Objects](#creating-csv-text-from-objects)
-[Standard Types](#standard-types)
-[Culture](#culture)
-[Automatic Conversion](#automatic-conversion)
-[Custom Conversion](#custom-conversion)
-[Anonymous Types](#anonymous-types)
-[Tables and Rows](#tables-and-rows)
+    [Creating Objects from CSV Text](#creating-objects-from-csv-text)  
+    [Creating CSV Text from Objects](#creating-csv-text-from-objects)  
+[Standard Types](#standard-types)  
+[Culture](#culture)  
+[Automatic Conversion](#automatic-conversion)  
+[Custom Conversion](#custom-conversion)  
+[Anonymous Types](#anonymous-types)  
+[Tables and Rows](#tables-and-rows)  
 
 &nbsp;
 
@@ -358,6 +358,12 @@ Apple,Banana,Cherry
 Green,Yellow
 ,,,,
 ```
+
+### Any to Any
+
+`GetItems` supports creating items directly from CSV text or from a table.
+`GetTable` supports creating a table from items or from text.
+`GetText` supporst creating CSV text from items or from a table
 
 [Fubu]: <https://fubumvc.github.io/>
 [BbtS2]: <https://en.wikipedia.org/wiki/List_of_The_Big_Bang_Theory_episodes#Season_2_(2008%E2%80%9309)>
