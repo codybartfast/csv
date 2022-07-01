@@ -39,6 +39,7 @@ Contents
 * [Custom Conversion](#custom-conversion)  
 * [Anonymous Types](#anonymous-types)  
 * [Tables and Rows](#tables-and-rows)  
+* [Any to Any](#any-to-any)
 
 &nbsp;
 
@@ -62,6 +63,8 @@ The Griffin Equivalency,21, 4 ,"October 13, 2008",3T7354,9356497
 We can create `Episode` objects from this CSV Text using `CSV.GetItems`:
 
 ```csharp
+using Fmbm.Text;
+
 Episode[] episodes = Csv.GetItems(csvTextIn, row =>
     new Episode
     {
@@ -86,6 +89,8 @@ given field in that row, the `itemMaker`uses those values to construct an item.
 We can create CSV text from these objects using `Csv.GetText`:
 
 ```csharp
+using Fmbm.Text;
+
 string csvTextOut = Csv.GetText(episodes,
     ("No. Overall", ep => ep.NumOverall),
     ("No. In Season", ep => ep.NumInSeason),
@@ -336,8 +341,8 @@ Green,Yellow
 
 ### Any to Any
 
-`GetItems` supports creating items directly from CSV text or from a table.
-`GetTable` supports creating a table from items or from text.
+`GetItems` supports creating items directly from CSV text or from a table.  
+`GetTable` supports creating a table from items or from text.  
 `GetText` supporst creating CSV text from items or from a table
 
 [Fubu]: <https://fubumvc.github.io/>
