@@ -4,7 +4,7 @@ public class Row
 {
     public const string Comma = ",";
 
-    public List<Cell> Cells { get; }
+    public List<Cell> Cells { get; set; }
 
     public Row(IEnumerable<Cell> cells)
     {

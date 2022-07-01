@@ -4,9 +4,11 @@ namespace Fmbm.Text;
 
 public class Table
 {
-    static string JoinPlusSeparator(string sep, IEnumerable<string> strings){
+    static string JoinPlusSeparator(string sep, IEnumerable<string> strings)
+    {
         var sb = new StringBuilder();
-        foreach(var str in strings){
+        foreach (var str in strings)
+        {
             sb.Append(str);
             sb.Append(sep);
         }
@@ -15,7 +17,7 @@ public class Table
 
     public const string NewLine = "\n";
 
-    public List<Row> Rows { get; }
+    public List<Row> Rows { get; set; }
 
     public Table(IEnumerable<Row> rows)
     {
