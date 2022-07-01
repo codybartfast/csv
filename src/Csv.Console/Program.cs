@@ -10,7 +10,7 @@ var inPath = Path.Combine(dir, "bbtIn.csv");
 var outPath = Path.Combine(dir, "bbtOut.csv");
 var csvTextIn = new CCFile(inPath).ReadText();
 
-var episodes = Csv.GetItems(csvTextIn, row =>
+var episodes = Csv.GetItems(csvTextIn, CultureInfo.InvariantCulture, row =>
     new Episode
     {
         NumOverall = row("No. overall"),
@@ -22,7 +22,7 @@ var episodes = Csv.GetItems(csvTextIn, row =>
 
 var byOverall = episodes.OrderBy(ep => ep.NumOverall).ToArray();
 
-string csvTextOut = Csv.GetText(episodes,
+string csvTextOut = Csv.GetText(episodes, CultureInfo.InvariantCulture,
     ("No. Overall", ep => ep.NumOverall),
     ("No. In Season", ep => ep.NumInSeason),
     ("Title", ep => ep.Title),
@@ -35,9 +35,19 @@ var csvTextOutFr = Csv.GetText(byOverall, CultureInfo.GetCultureInfo("fr-FR"),
     ("Original Air Date", e => e.OriginalAirDate),
     ("US Viewers (M)", e => Math.Round((e.USViewers / 1000000), 2)));
 
+new CCFile(outPath).WriteText(csvTextOut);
+
 Console.WriteLine(csvTextIn);
 Console.WriteLine(csvTextOut);
 Console.WriteLine(csvTextOutFr);
+
+var p = 0.4567m;
+var t = p.ToString("0.0%");
+Console.WriteLine(t);
+var P = decimal.Parse(t.TrimEnd('%'));
+Console.WriteLine(P);
+
+var _ = CultureInfo.InvariantCulture;
 
 class Episode
 {

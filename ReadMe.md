@@ -2,7 +2,7 @@ CSV
 ===
 
 Basic reading and writing of CSV (comma-separated value) text to help share data
-with other applications like Excel.
+with other applications like spreadsheets applications.
 
 Features:
 
@@ -106,18 +106,110 @@ In the example above.  The first column info is `("No. Overall", ep =>
 ep.NumOverall)`.  That is, the header of the first column is `"No. Overall"` and
 its value is obtained form the `NumOverall` property.
 
-CLASS
+The Episode class used in the above:
 
-CELL
+```csharp
+class Episode
+{
+    public long NumOverall { get; set; }
+    public int NumInSeason { get; set; }
+    public string Title { get; set; }
+    public DateTime OriginalAirDate { get; set; }
+    public decimal USViewers { get; set; }
+}
+```
+
+&nbsp;
+
+Standard Types
+--------------
+
+The 'standard' types are:
+
+`string`
+`DateTime`
+`int`
+`uint`
+`long`
+`ulong`
+`float`
+`double`
+`decimal`
+
+&nbsp;
+
+Culture
+-------
+
+`CultureInfo.CurrentCulture` is used by default to convert to and from text.
+
+The culture can be specified by passing it as the second argument to either of
+the above methods.  E.g. to explictly use `InvariantCulture`:
+
+```csharp
+var episodes = Csv.GetItems(csvTextIn, CultureInfo.InvariantCulture, row =>
+    new Episode
+    {
+        NumOverall = row("No. overall"),
+        ...
+    }).ToArray();
+```
+
+```csharp
+string csvTextOut = Csv.GetText(episodes, CultureInfo.InvariantCulture,
+    ("No. Overall", ep => ep.NumOverall),
+    ...);
+```
+
+&nbsp;
+
+Automatic Conversion
+--------------------
+
+### Conversion To Text
+
+`string`: no conversion.
+
+`DateTime`: converts to text using the format 'yyyy-MM-dd HH:mm'. (This format
+allows for time data to be included and is readable by most spreadsheet apps).
+
+The standard numeric types are converted by calling `.ToString(<culture>)` on
+the number.
+
+Other types are converted by calling `.ToString()` on the object.
+
+`null` is converted to an empty string.
+
+### Conversion From Text
+
+For the standard types conversion from text is done by implicit conversion
+operators.
+
+`string`: no conversion.
+
+`DateTime`: first a TryParseExact is attempted using the default format
+'yyyy-MM-dd HH:mm', if that fails then `Parse` is called using the provided or
+default culture.  Leading and trailing whitespace is allowed.
+
+Standard numeric types are converted by calling `Parse` on the numeric type with
+the provided or default culture.  Leading and trailing whitespace, and thousands
+separators are allowed.
+
+There is no automatic conversion from text to non-standard types.
+
+&nbsp;
 
 
 
-Not for editing or two way mod
+
+https://stackoverflow.com/questions/2171615/how-to-convert-percentage-string-to-double
+date time
 Custom converters, percent, culture!
 scientific
 null & "" -> ""
 culture 
 anonymouse types
+Not for editing or two way mod
 
 [Fubu]: <https://fubumvc.github.io/>
 [BbtS2]: <https://en.wikipedia.org/wiki/List_of_The_Big_Bang_Theory_episodes#Season_2_(2008%E2%80%9309)>

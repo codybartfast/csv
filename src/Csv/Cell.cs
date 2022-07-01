@@ -5,12 +5,16 @@ namespace Fmbm.Text;
 
 public partial class Cell
 {
-    const NumberStyles IntStyles =
+    const DateTimeStyles DateTimeStyle =
+        DateTimeStyles.None |
+        DateTimeStyles.AllowLeadingWhite |
+        DateTimeStyles.AllowTrailingWhite;
+    const NumberStyles IntStyle =
         NumberStyles.Integer |
         NumberStyles.AllowLeadingWhite |
         NumberStyles.AllowTrailingWhite |
         NumberStyles.AllowThousands;
-    const NumberStyles FloatStyles =
+    const NumberStyles FloatStyle =
         NumberStyles.Float |
         NumberStyles.AllowLeadingWhite |
         NumberStyles.AllowTrailingWhite |
@@ -19,53 +23,10 @@ public partial class Cell
     internal static CultureInfo DefaultCulture { get; } =
         CultureInfo.CurrentCulture;
 
+    static public string DateTimeFormat { get; } = "yyyy-MM-dd HH:mm";
+
     public string Text { get; init; }
     public CultureInfo Culture { get; init; }
-
-    // public Cell(string text, CultureInfo culture)
-    // {
-    //     this.Text = text;
-    // }
-
-    // public Cell(DateTime dt, CultureInfo culture)
-    // {
-    //     this.Text = dt.ToString("yyyy-MM-dd HH:mm");
-    // }
-
-    // public Cell(int n, CultureInfo culture)
-    // {
-    //     this.Text = n.ToString(culture);
-    // }
-
-    // public Cell(uint n, CultureInfo culture)
-    // {
-    //     this.Text = n.ToString(culture);
-    // }
-
-    // public Cell(long n, CultureInfo culture)
-    // {
-    //     this.Text = n.ToString(culture);
-    // }
-
-    // public Cell(ulong n, CultureInfo culture)
-    // {
-    //     this.Text = n.ToString(culture);
-    // }
-
-    // public Cell(float n)
-    // {
-    //     this.Text = n.ToString(culture);
-    // }
-
-    // public Cell(double n)
-    // {
-    //     this.Text = n.ToString(culture);
-    // }
-
-    // public Cell(decimal n)
-    // {
-    //     this.Text = n.ToString(culture);
-    // }
 
     public Cell(object o) : this(o, DefaultCulture) { }
 
@@ -79,7 +40,7 @@ public partial class Cell
                 this.Text = text;
                 break;
             case DateTime dt:
-                this.Text = dt.ToString("yyyy-MM-dd HH:mm");
+                this.Text = dt.ToString(DateTimeFormat);
                 break;
             case int n:
                 this.Text = n.ToString(culture);
@@ -108,10 +69,6 @@ public partial class Cell
         }
     }
 
-    // public static implicit operator Cell(string text)
-    // {
-    //     return new Cell(text);
-    // }
 
     public static implicit operator string(Cell cell)
     {
@@ -120,83 +77,49 @@ public partial class Cell
 
     public static implicit operator DateTime(Cell cell)
     {
-        return DateTime.Parse(cell.Text, cell.Culture);
+        DateTime dt;
+        if (!DateTime.TryParseExact(
+            cell.Text, DateTimeFormat, null, DateTimeStyle, out dt))
+        {
+            dt = DateTime.Parse(cell.Text, cell.Culture, DateTimeStyle);
+        }
+        return dt;
     }
-
-    // public static implicit operator Cell(DateTime dt)
-    // {
-    //     return new Cell(dt);
-    // }
 
     public static implicit operator int(Cell cell)
     {
-        return int.Parse(cell.Text, IntStyles, cell.Culture);
+        return int.Parse(cell.Text, IntStyle, cell.Culture);
     }
-
-    // public static implicit operator Cell(int n)
-    // {
-    //     return new Cell(n);
-    // }
 
     public static implicit operator uint(Cell cell)
     {
-        return uint.Parse(cell.Text, IntStyles, cell.Culture);
+        return uint.Parse(cell.Text, IntStyle, cell.Culture);
     }
-
-    // public static implicit operator Cell(uint n)
-    // {
-    //     return new Cell(n);
-    // }
 
     public static implicit operator long(Cell cell)
     {
-        return long.Parse(cell.Text, IntStyles, cell.Culture);
+        return long.Parse(cell.Text, IntStyle, cell.Culture);
     }
-
-    // public static implicit operator Cell(long n)
-    // {
-    //     return new Cell(n);
-    // }
 
     public static implicit operator ulong(Cell cell)
     {
-        return ulong.Parse(cell.Text, IntStyles, cell.Culture);
+        return ulong.Parse(cell.Text, IntStyle, cell.Culture);
     }
-
-    // public static implicit operator Cell(ulong n)
-    // {
-    //     return new Cell(n);
-    // }
 
     public static implicit operator float(Cell cell)
     {
-        return float.Parse(cell.Text, FloatStyles, cell.Culture);
+        return float.Parse(cell.Text, FloatStyle, cell.Culture);
     }
-
-    // public static implicit operator Cell(float n)
-    // {
-    //     return new Cell(n);
-    // }
 
     public static implicit operator double(Cell cell)
     {
-        return double.Parse(cell.Text, FloatStyles, cell.Culture);
+        return double.Parse(cell.Text, FloatStyle, cell.Culture);
     }
-
-    // public static implicit operator Cell(double n)
-    // {
-    //     return new Cell(n);
-    // }
 
     public static implicit operator decimal(Cell cell)
     {
-        return decimal.Parse(cell.Text, FloatStyles, cell.Culture);
+        return decimal.Parse(cell.Text, FloatStyle, cell.Culture);
     }
-
-    // public static implicit operator Cell(decimal n)
-    // {
-    //     return new Cell(n);
-    // }
 
     static readonly Regex needsQuoting =
         new Regex("[,\"\n]", RegexOptions.Compiled);
