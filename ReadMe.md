@@ -176,7 +176,7 @@ Automatic Conversion
 
 ### Conversion To Text
 
-`DateTime`: converts to text using the format 'yyyy-MM-dd HH:mm'. (This format
+`DateTime`: converts to text using the format `yyyy-MM-dd HH:mm`. (This format
 allows for time data to be included and is readable by most spreadsheet apps).
 
 The standard numeric types are converted by calling `.ToString(<culture>)` on
@@ -192,12 +192,12 @@ For the standard types conversion from text is done by implicit conversion
 operators.
 
 `DateTime`: first a TryParseExact is attempted using the default format
-'yyyy-MM-dd HH:mm', if that fails then `Parse` is called using the provided or
-default culture.  Leading and trailing whitespace is allowed.
+`yyyy-MM-dd HH:mm`, if that fails then `Parse` is called using the provided or
+the default culture.  Leading and trailing whitespace is allowed.
 
 Standard numeric types are converted by calling `Parse` on the numeric type with
-the provided or default culture.  Leading and trailing whitespace, and thousands
-separators are allowed.
+the provided or the default culture.  Leading and trailing whitespace, and
+thousands separators are allowed.
 
 There is no automatic conversion from text to non-standard types.
 
@@ -241,50 +241,25 @@ var episodes = Csv.GetItems(csvTextIn, CultureInfo.InvariantCulture, row =>
     }).ToArray();
 ```
 
-The `row` function returns a `Cell`. To explicitly get a string use its
-`Text` property.  This example will fail because the implicit conversion to text
-is not used:
+Similar conversion methods can be used to convert other types to and from
+CSV text.
 
-```csharp
-DateTime ObjectToDate(object dateObj)
-{
-    switch (dateObj)
-    {
-        case string text:
-            return DateTime.ParseExact(text, "HH:mm on dd-MM-yyyy", null);
-        default:
-            throw new Exception(
-                $"I don't know what to do with a '{dateObj.GetType()}'");
-    }
-}
-
-var episodes = Csv.GetItems(csvTextIn, CultureInfo.InvariantCulture, row =>
-    new Episode
-    {
-        ...
-        OriginalAirDate = ObjectToDate(row("Original air date")),
-        ...
-    }).ToArray();
-```
-
-An exception is thrown:
-
-```Text
-Unhandled exception. System.Exception: I don't know what to do with a 'Fmbm.Text.Cell'
-   at Program.<<Main>$>g__ObjectToDate|0_0(Object dateObj) in ...
-```
-
-But the following works as expected:
+The `row` method returns a `Cell`.  To explicitly access its content as a string
+use the `Text` property.  For example:
 
 ```csharp
 var episodes = Csv.GetItems(csvTextIn, CultureInfo.InvariantCulture, row =>
     new Episode
     {
         ...
-        OriginalAirDate = ObjectToDate(row("Original air date").Text),
+        OriginalAirDate = TextToDate(row("Original air date").Text),
         ...
     }).ToArray();
 ```
+
+Using the `Text` property is not needed in this case but would be necessary if
+the conversion function took an `object`, in that case the cell's implicit
+conversion would not be called.
 
 &nbsp;
 
