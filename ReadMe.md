@@ -30,15 +30,15 @@ connection.
 Contents
 --------
 
-[Basic Usage](#basic-usage)  
-    [Creating Objects from CSV Text](#creating-objects-from-csv-text)  
-    [Creating CSV Text from Objects](#creating-csv-text-from-objects)  
-[Standard Types](#standard-types)  
-[Culture](#culture)  
-[Automatic Conversion](#automatic-conversion)  
-[Custom Conversion](#custom-conversion)  
-[Anonymous Types](#anonymous-types)  
-[Tables and Rows](#tables-and-rows)  
+* [Basic Usage](#basic-usage)  
+  * [Creating Objects from CSV Text](#creating-objects-from-csv-text)  
+  * [Creating CSV Text from Objects](#creating-csv-text-from-objects)  
+* [Standard Types](#standard-types)  
+* [Culture](#culture)  
+* [Automatic Conversion](#automatic-conversion)  
+* [Custom Conversion](#custom-conversion)  
+* [Anonymous Types](#anonymous-types)  
+* [Tables and Rows](#tables-and-rows)  
 
 &nbsp;
 
