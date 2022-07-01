@@ -126,15 +126,15 @@ Standard Types
 
 The 'standard' types are:
 
-`string`
-`DateTime`
-`int`
-`uint`
-`long`
-`ulong`
-`float`
-`double`
-`decimal`
+`string`  
+`DateTime`  
+`int`  
+`uint`  
+`long`  
+`ulong`  
+`float`  
+`double`  
+`decimal`  
 
 &nbsp;
 
@@ -168,8 +168,6 @@ Automatic Conversion
 
 ### Conversion To Text
 
-`string`: no conversion.
-
 `DateTime`: converts to text using the format 'yyyy-MM-dd HH:mm'. (This format
 allows for time data to be included and is readable by most spreadsheet apps).
 
@@ -185,8 +183,6 @@ Other types are converted by calling `.ToString()` on the object.
 For the standard types conversion from text is done by implicit conversion
 operators.
 
-`string`: no conversion.
-
 `DateTime`: first a TryParseExact is attempted using the default format
 'yyyy-MM-dd HH:mm', if that fails then `Parse` is called using the provided or
 default culture.  Leading and trailing whitespace is allowed.
@@ -199,17 +195,93 @@ There is no automatic conversion from text to non-standard types.
 
 &nbsp;
 
+Custom Conversion
+-----------------
+
+Non-standard types, and custom text formats can be supported by explictly
+providing or parsing the CVS text.  For example, if we want to store the
+original air date in the form `"20:00 on 15-08-2008"`:
+
+Converting to CSV text:
+
+```csharp
+String DateToText(DateTime date){
+    return date.ToString("HH:mm on dd-MM-yyyy");
+}
+
+string csvTextOut = Csv.GetText(episodes, CultureInfo.InvariantCulture,
+    ...
+    ("Original Air Date", ep => DateToText(ep.OriginalAirDate)),
+    ...
+    );
+```
+
+Converting back to a DateTime:
+
+```csharp
+DateTime TextToDate(string text)
+{
+    return DateTime.ParseExact(text, "HH:mm on dd-MM-yyyy", null);
+}
+
+var episodes = Csv.GetItems(csvTextIn, CultureInfo.InvariantCulture, row =>
+    new Episode
+    {
+        ...
+        OriginalAirDate = TextToDate(row("Original air date")),
+        ...
+    }).ToArray();
+```
+
+The `row` function returns a `Cell`. To explicitly get a string use its
+`Text` property.  This example will fail because the implicit conversion to text
+is not used:
+
+```csharp
+DateTime ObjectToDate(object dateObj)
+{
+    switch (dateObj)
+    {
+        case string text:
+            return DateTime.ParseExact(text, "HH:mm on dd-MM-yyyy", null);
+        default:
+            throw new Exception(
+                $"I don't know what to do with a '{dateObj.GetType()}'");
+    }
+}
+
+var episodes = Csv.GetItems(csvTextIn, CultureInfo.InvariantCulture, row =>
+    new Episode
+    {
+        ...
+        OriginalAirDate = ObjectToDate(row("Original air date")),
+        ...
+    }).ToArray();
+```
+
+```Text
+Unhandled exception. System.Exception: I don't know what to do with a 'Fmbm.Text.Cell'
+   at Program.<<Main>$>g__ObjectToDate|0_0(Object dateObj) in ...
+```
+
+But the following works as expected:
+
+```csharp
+var episodes = Csv.GetItems(csvTextIn, CultureInfo.InvariantCulture, row =>
+    new Episode
+    {
+        ...
+        OriginalAirDate = ObjectToDate(row("Original air date").Text),
+        ...
+    }).ToArray();
+```
 
 
 
-https://stackoverflow.com/questions/2171615/how-to-convert-percentage-string-to-double
-date time
-Custom converters, percent, culture!
-scientific
-null & "" -> ""
-culture 
+
+
+
 anonymouse types
-Not for editing or two way mod
 
 [Fubu]: <https://fubumvc.github.io/>
 [BbtS2]: <https://en.wikipedia.org/wiki/List_of_The_Big_Bang_Theory_episodes#Season_2_(2008%E2%80%9309)>
