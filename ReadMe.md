@@ -6,32 +6,111 @@ with other applications like Excel.
 
 Features:
 
-* Simple conversion form objects to CSV text and from CSV text to objects
+* Create objects from CSV text and create CSV text from objects.
 * Implicit conversion for standard types: string, DateTime, int, uint, long,
   ulong, float, double and decimal.
-* Conversion can be customized for standard or other types.
-* Generally you can ignore the internal data structures (Table, Row, Cell) but
-  they are accessible.
+* Other types are supported with explicit conversion.
+* User specified cutlure. (Defaults to `CurrentCultue`.)
+* Intermediate data structures: `Table`, `Row`, and `Cell`, are available for
+  rudimentary editing of CSV data.
 
-Limitations:
+&nbsp;
 
-* Fmbm.Csv is _not_ designed for editing data that will also be edited by a
-  separate application like Excel.  It will only write data for the fields it
-  knows about and so could lose data if additional columns were added by an
-  applicaiton like Excel.
-* It uses the InvarientCulture to read and
+For Me, By Me (FMBM)
+--------------------
 
-Csv seemed like a good idea at 2022-06-23T08:54:30.3216162Z.
+FMBM packages are created primarily for use by the author.  They are intended
+for getting casual, desktop applications up and running quickly.  They may not
+be suitable for production, scalable nor critical applications. The name is
+inspired by the [Fubu][Fubu], _For Us, By Us_, project, but there is no other
+connection.
+
+&nbsp;
+
+Contents
+--------
+
+[Basic Usage](#basic-usage)  
+
+&nbsp;
+
+Basic Usage
+-----------
+
+### Creating Objects from CSV Text
+
+Given this CSV text for the [second season][BbtS2] of The Big Bang Theory:
+
+```csv
+Title,No. overall,No. in season,Original air date,Prod. code,U.S. viewers
+The Bad Fish Paradigm,18,1,"September 22, 2008",3T7351,9360364
+The Barbarian Sublimation,20,3,"October 6, 2008",3T7353,9329673
+The Codpiece Topology,19,2,"September 29, 2008",3T7352,8758200
+The Cooper-Nowitzki Theorem,23,6,"November 3, 2008",3T7356,9670118
+The Euclid Alternative,22,5,"October 20, 2008",3T7355,9280649
+The Griffin Equivalency,21,4,"October 13, 2008",3T7354,9356497
+```
+
+We can create `Episode` objects from this CSV Text using `CSV.GetItems`:
+
+```csharp
+Episode[] episodes = Csv.GetItems(csvTextIn, row =>
+    new Episode
+    {
+        NumOverall = row("No. overall"),
+        NumInSeason = row("No. in season"),
+        Title = row("Title"),
+        OriginalAirDate = row("Original air date"),
+        USViewers = row("U.S. viewers")
+    }).ToArray();
+```
+
+`GetItems<TItem>` takes the CSV text and an `itemMaker` function.  `itemMaker`
+is a function which is given a `row` function which looks up the value of a
+given field in that row, the `itemMaker`uses those values to construct an item.
+`row` is a `Func<string, Cell>` (string -> Cell), and `itemMaker` is a
+`Func<Func<string, Cell>, Item>` ((string -> Cell) -> Item).
+
+&nbsp;
+
+### Creating CSV Text from Objects
+
+We can create CSV text from these objects using `Csv.GetText`:
+
+```csharp
+string csvTextOut = Csv.GetText(episodes,
+    ("No. Overall", ep => ep.NumOverall),
+    ("No. In Season", ep => ep.NumInSeason),
+    ("Title", ep => ep.Title),
+    ("Original Air Date", ep => ep.OriginalAirDate),
+    ("US Viewers", ep => ep.USViewers));
+```
+
+This creates the following CSV text:
+
+```csv
+No. Overall,No. In Season,Title,Original Air Date,US Viewers
+18,1,The Bad Fish Paradigm,2008-09-22 00:00,9360364
+20,3,The Barbarian Sublimation,2008-10-06 00:00,9329673
+19,2,The Codpiece Topology,2008-09-29 00:00,8758200
+23,6,The Cooper-Nowitzki Theorem,2008-11-03 00:00,9670118
+22,5,The Euclid Alternative,2008-10-20 00:00,9280649
+21,4,The Griffin Equivalency,2008-10-13 00:00,9356497
+```
+
+COL INFO
+
+CLASS
+
+
+
 
 Not for editing or two way mod
-pass a function for di
 Custom converters, percent, culture!
 scientific
 null & "" -> ""
-From / FromAny
-culture - invarient limited testing
+culture 
+anonymouse types
 
-why fmbm - two projects, old style, proven
-thought of publishing -> quality
-readme -> usage -> features
-Anonymous Types
+[Fubu]: <https://fubumvc.github.io/>
+[BbtS2]: <https://en.wikipedia.org/wiki/List_of_The_Big_Bang_Theory_episodes#Season_2_(2008%E2%80%9309)>

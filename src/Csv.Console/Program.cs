@@ -22,11 +22,13 @@ var episodes = Csv.GetItems(csvTextIn, row =>
 
 var byOverall = episodes.OrderBy(ep => ep.NumOverall).ToArray();
 
-var csvTextOut = Csv.GetText(byOverall,
-    ("No.", e => e.NumOverall),
-    ("Title", e => e.Title.Trim('"')),
-    ("Original Air Date", e => e.OriginalAirDate),
-    ("US Viewers (M)", e => Math.Round((e.USViewers / 1000000), 2)));
+string csvTextOut = Csv.GetText(episodes,
+    ("No. Overall", ep => ep.NumOverall),
+    ("No. In Season", ep => ep.NumInSeason),
+    ("Title", ep => ep.Title),
+    ("Original Air Date", ep => ep.OriginalAirDate),
+    ("US Viewers", ep => ep.USViewers));
+
 
 var csvTextOutFr = Csv.GetText(byOverall, CultureInfo.GetCultureInfo("fr-FR"),
     ("No.", e => e.NumOverall),
