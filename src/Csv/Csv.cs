@@ -5,21 +5,15 @@ namespace Fmbm.Text;
 public static class Csv
 {
     static public CultureInfo DefaultCulture { get; } = Cell.DefaultCulture;
-
-    // public static IEnumerable<TItem> GetItems<TItem>(
-    //     Table table,
-    //     Func<Func<string, Cell>, TItem> itemMaker)
-    // {
-    //     return GetItems(table, DefaultCulture, itemMaker);
-    // }
+    static public StringComparer HeaderComparer { get; } =
+        StringComparer.InvariantCultureIgnoreCase;
 
     public static IEnumerable<TItem> GetItems<TItem>(
         Table table,
         Func<Func<string, Cell>, TItem> itemMaker)
     {
         var headers = table.Rows[0].Cells.Select(c => c.Text).ToArray();
-        var dict = new Dictionary<string, int>(
-            StringComparer.InvariantCultureIgnoreCase);
+        var dict = new Dictionary<string, int>(HeaderComparer);
         for (int i = 0; i < headers.Length; i++)
         {
             dict.Add(headers[i].Trim(), i);
@@ -112,8 +106,7 @@ public static class Csv
         }
 
         var headers = table.Rows[0].Cells.Select(c => c.Text).ToArray();
-        var grouped = headers.GroupBy(h => h,
-            StringComparer.InvariantCultureIgnoreCase).ToArray();
+        var grouped = headers.GroupBy(h => h, HeaderComparer).ToArray();
         var dup = grouped.FirstOrDefault(g => g.Count() > 1);
         if (dup is not null)
         {
