@@ -43,12 +43,12 @@ Given this CSV text for the [second season][BbtS2] of The Big Bang Theory:
 
 ```csv
 Title,No. overall,No. in season,Original air date,Prod. code,U.S. viewers
-The Bad Fish Paradigm,18,1,"September 22, 2008",3T7351,9360364
-The Barbarian Sublimation,20,3,"October 6, 2008",3T7353,9329673
-The Codpiece Topology,19,2,"September 29, 2008",3T7352,8758200
-The Cooper-Nowitzki Theorem,23,6,"November 3, 2008",3T7356,9670118
-The Euclid Alternative,22,5,"October 20, 2008",3T7355,9280649
-The Griffin Equivalency,21,4,"October 13, 2008",3T7354,9356497
+The Bad Fish Paradigm,18, 1 ,"September 22, 2008",3T7351,9360364
+The Barbarian Sublimation,20, 3 ,"October 6, 2008",3T7353,9329673
+The Codpiece Topology,19, 2 ,"September 29, 2008",3T7352,8758200
+The Cooper-Nowitzki Theorem,23, 6 ,"November 3, 2008",3T7356,9670118
+The Euclid Alternative,22, 5 ,"October 20, 2008",3T7355,9280649
+The Griffin Equivalency,21, 4 ,"October 13, 2008",3T7354,9356497
 ```
 
 We can create `Episode` objects from this CSV Text using `CSV.GetItems`:
@@ -199,8 +199,8 @@ Custom Conversion
 -----------------
 
 Non-standard types, and custom text formats can be supported by explictly
-providing or parsing the CVS text.  For example, if we want to store the
-original air date in the form `"20:00 on 15-08-2008"`:
+providing the CVS text or by parsing from the CVS text.  For example, to store
+the original air date in the form `"20:00 on 15-08-2008"`:
 
 Converting to CSV text:
 
@@ -259,6 +259,8 @@ var episodes = Csv.GetItems(csvTextIn, CultureInfo.InvariantCulture, row =>
     }).ToArray();
 ```
 
+An exception is thrown:
+
 ```Text
 Unhandled exception. System.Exception: I don't know what to do with a 'Fmbm.Text.Cell'
    at Program.<<Main>$>g__ObjectToDate|0_0(Object dateObj) in ...
@@ -276,12 +278,74 @@ var episodes = Csv.GetItems(csvTextIn, CultureInfo.InvariantCulture, row =>
     }).ToArray();
 ```
 
+&nbsp;
 
+Anonymous Types
+---------------
 
+`GetItems` can be used to generate anonymous types.  Use explicit casts
+to determine the type of the properties:
 
+```csharp
+var episodes = Csv.GetItems(csvTextIn, row =>
+    new
+    {
+        NumOverall = (long)row("No. overall"),
+        NumInSeason = (int)row("No. in season"),
+        Title = (string)row("Title"),
+        OriginalAirDate = (DateTime)row("Original air date"),
+        USViewers = (decimal)row("U.S. viewers")
+    });
+```
 
+Tables And Rows
+---------------
 
-anonymouse types
+Internally a `Table` is created whether converting from items to text
+(`IEnumerable<TItem> -> Table -> string`) or from text to items
+(`string -> Table -> IEnumerable<TItem>`).  `Fmbm.CSV` is not intend for editing
+CSV tables but `Table` does enable some basic editing.  For example, to put
+double quotes around the tites in the orignal CSV text:
+
+```csharp
+var table = Csv.GetTable(csvTextIn);
+foreach(var row in table.Rows.Skip(1)){
+    row[0] = new Cell($"\"{row[0]}\"");
+}
+var csvTextOut = Csv.GetText(table);
+```
+
+```csv
+Title,No. overall,No. in season,Original air date,Prod. code,U.S. viewers
+"""The Bad Fish Paradigm""",18, 1 ,"September 22, 2008",3T7351,9360364
+"""The Barbarian Sublimation""",20, 3 ,"October 6, 2008",3T7353,9329673
+"""The Codpiece Topology""",19, 2 ,"September 29, 2008",3T7352,8758200
+"""The Cooper-Nowitzki Theorem""",23, 6 ,"November 3, 2008",3T7356,9670118
+"""The Euclid Alternative""",22, 5 ,"October 20, 2008",3T7355,9280649
+"""The Griffin Equivalency""",21, 4 ,"October 13, 2008",3T7354,9356497
+```
+
+Note, it was necessary to `Skip` the first row to prevent putting double quotes
+arount `Title`.
+
+Unlike reading and writing items, the format of the CSV is unchanged.  The
+production code is still present, the date is in the original format and spaces
+remain around the episode number.
+
+### Table Tolerance
+
+`GetTable` is more permisive than `GetItems` and can be used to read CSV text
+that cannot be used by `GetItems`.  `GetItems` requires there is at
+lease one row, that the items in the first row (the headers) are unique, and 
+that all the rows are of the same length.  For example, this CSV can be read by
+`GetTable`, but would cause `GetItems` to throw an exception.
+
+```csv
+Fruit,Fruit,Fruit
+Apple,Banana,Cherry
+Green,Yellow
+,,,,
+```
 
 [Fubu]: <https://fubumvc.github.io/>
 [BbtS2]: <https://en.wikipedia.org/wiki/List_of_The_Big_Bang_Theory_episodes#Season_2_(2008%E2%80%9309)>
