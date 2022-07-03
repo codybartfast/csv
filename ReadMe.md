@@ -7,12 +7,12 @@ with other applications like spreadsheets applications.
 Features:
 
 * Create objects from CSV text and create CSV text from objects.
-* Implicit conversion for standard types: string, DateTime, int, uint, long,
-  ulong, float, double and decimal.
+* Implicit conversion for standard types (string, DateTime, int, uint, long,
+  ulong, float, double and decimal).
 * Other types are supported with explicit conversion.
-* User specified cutlure. (Defaults to `CurrentCultue`.)
+* Specify the culture used for concersion. (Defaults to `CurrentCultue`.)
 * Intermediate data structures: `Table`, `Row`, and `Cell`, are available for
-  rudimentary editing of CSV data.
+  rudimentary editing of CSV text.
 
 &nbsp;
 
@@ -22,7 +22,7 @@ For Me, By Me (FMBM)
 FMBM packages are created primarily for use by the author.  They are intended
 for getting casual, desktop applications up and running quickly.  They may not
 be suitable for production, scalable nor critical applications. The name is
-inspired by the [Fubu][Fubu], _For Us, By Us_, project, but there is no other
+inspired by the [Fubu][Fubu] project, '_For Us, By Us_', but there is no other
 connection.
 
 &nbsp;
@@ -48,7 +48,8 @@ Basic Usage
 
 ### Creating Objects from CSV Text
 
-Given this CSV text for the [second season][BbtS2] of The Big Bang Theory:
+Given this CSV text for some episodes from the [second season][BbtS2] of The Big
+Bang Theory:
 
 ```csv
 Title,No. overall,No. in season,Original air date,Prod. code,U.S. viewers
@@ -76,17 +77,27 @@ Episode[] episodes = Csv.GetItems(csvTextIn, row =>
     }).ToArray();
 ```
 
-`GetItems<TItem>` takes the CSV text and an `itemMaker` function.  `itemMaker`
-is a function which is given a `row` function which looks up the value of a
-given field in that row, the `itemMaker`uses those values to construct an item.
-`row` is a `Func<string, Cell>` (string -> Cell), and `itemMaker` is a
-`Func<Func<string, Cell>, Item>` ((string -> Cell) -> Item).
+Signature:
+
+```csharp
+// (string, ((string -> Cell) -> TItem)) -> IEnumerable<Item>
+public static IEnumerable<TItem> GetItems<TItem>(
+        string csvText,
+        Func<Func<string, Cell>, TItem> itemMaker)
+//          |------ row ------|
+```
+
+`itemMaker` is called once for each row of the CSV text (except for the header
+row).  `itemMaker` is given a `row` function and returns a `TItem`.
+
+`row` takes a header name and returns a `Cell` containing the text for that
+position.
 
 &nbsp;
 
 ### Creating CSV Text from Objects
 
-We can create CSV text from these objects using `Csv.GetText`:
+CSV text can be created from objects using  `Csv.GetText`:
 
 ```csharp
 using Fmbm.Text;
@@ -111,15 +122,22 @@ No. Overall,No. In Season,Title,Original Air Date,US Viewers
 21,4,The Griffin Equivalency,2008-10-13 00:00,9356497
 ```
 
-`Csv.GetText<TItem>` takes the `items` to be translated and an arbitrary number
-of tuples that describe each column of the CSV text.  The tuple comprises the
-header for the column and a function that gets the value for that column for a
-given item. The full type is `(string header, Func<TItem, object> getValue)`.
-In the example above.  The first column info is `("No. Overall", ep =>
-ep.NumOverall)`.  That is, the header of the first column is `"No. Overall"` and
-its value is obtained form the `NumOverall` property.
+Signature:
 
-The Episode class used in the above:
+```csharp
+//  (IEnumerable<TItem>, (columnInfo, columnInfo, ...)) -> string
+    public static string GetText<TItem>(
+        IEnumerable<TItem> items,
+        params (string, Func<TItem, object>)[] columnInfos)
+```
+
+Each `columnInfo` is a tuple comprising the header for a column and a function
+that gets the value for that column from a `TItem`. In the example above.  The
+first columnInfo is `("No. Overall", ep => ep.NumOverall)`.  That is, the
+header of the first column is `"No. Overall"` and the value for that column
+is obtained form the `NumOverall` property of each episode.
+
+The Episode class used in the above examples is:
 
 ```csharp
 class Episode
@@ -137,7 +155,10 @@ class Episode
 Standard Types
 --------------
 
-The 'standard' types are:
+For 'standard' type the `Cell` does the conversion between the text value it
+holds and the required type.
+
+The standard types are:
 
 `string`  
 `DateTime`  
@@ -154,10 +175,11 @@ The 'standard' types are:
 Culture
 -------
 
-`CultureInfo.CurrentCulture` is used by default to convert to and from text.
+For standard types `CultureInfo.CurrentCulture` is used by default to convert to
+and from text.
 
-The culture can be specified by passing it as the second argument to either of
-the above methods.  E.g. to explictly use `InvariantCulture`:
+The culture can be specified by passing it as the second argument to `GetItems`
+of `GetText`.  E.g. to explictly use `InvariantCulture`:
 
 ```csharp
 var episodes = Csv.GetItems(csvTextIn, CultureInfo.InvariantCulture, row =>
@@ -171,7 +193,8 @@ var episodes = Csv.GetItems(csvTextIn, CultureInfo.InvariantCulture, row =>
 ```csharp
 string csvTextOut = Csv.GetText(episodes, CultureInfo.InvariantCulture,
     ("No. Overall", ep => ep.NumOverall),
-    ...);
+    ...
+    );
 ```
 
 &nbsp;
@@ -222,7 +245,7 @@ String DateToText(DateTime date){
     return date.ToString("HH:mm on dd-MM-yyyy");
 }
 
-string csvTextOut = Csv.GetText(episodes, CultureInfo.InvariantCulture,
+string csvTextOut = Csv.GetText(episodes,
     ...
     ("Original Air Date", ep => DateToText(ep.OriginalAirDate)),
     ...
@@ -237,7 +260,7 @@ DateTime TextToDate(string text)
     return DateTime.ParseExact(text, "HH:mm on dd-MM-yyyy", null);
 }
 
-var episodes = Csv.GetItems(csvTextIn, CultureInfo.InvariantCulture, row =>
+var episodes = Csv.GetItems(csvTextIn, row =>
     new Episode
     {
         ...
@@ -271,8 +294,8 @@ conversion would not be called.
 Anonymous Types
 ---------------
 
-`GetItems` can be used to generate anonymous types.  Use explicit casts
-to determine the type of the properties:
+`GetItems` can be used to generate anonymous types.  Use explicit casts to
+specify the type of the properties:
 
 ```csharp
 var episodes = Csv.GetItems(csvTextIn, row =>
@@ -291,11 +314,11 @@ var episodes = Csv.GetItems(csvTextIn, row =>
 Tables And Rows
 ---------------
 
-Internally a `Table` is created whether converting from items to text
+Internally a `Table` is created both converting from items to text
 (`IEnumerable<TItem> -> Table -> string`) or from text to items
-(`string -> Table -> IEnumerable<TItem>`).  `Fmbm.CSV` is not intend for editing
-CSV tables but `Table` does enable some basic editing.  For example, to put
-double quotes around the tites in the orignal CSV text:
+(`string -> Table -> IEnumerable<TItem>`).  `Fmbm.CSV` is not intended for
+editing CSV tables but `Table` does enable some basic editing.  For example, to
+put double quotes around the tites in the orignal CSV text:
 
 ```csharp
 var table = Csv.GetTable(csvTextIn);
@@ -316,21 +339,21 @@ Title,No. overall,No. in season,Original air date,Prod. code,U.S. viewers
 ```
 
 Note, it was necessary to `Skip` the first row to prevent putting double quotes
-arount `Title`.
+arount `Title` in the headers row.
 
-Unlike reading and writing items, the format of the CSV is unchanged.  The
-production code is still present, the date is in the original format and spaces
-remain around the episode number.
+Unlike reading and writing items to text, the format of the CSV text is
+unchanged.  The production code is still present, the date is in the original
+format and the space remain around the episode number.
 
 &nbsp;
 
 ### Table Tolerance
 
 `GetTable` is more permisive than `GetItems` and can be used to read CSV text
-that cannot be used by `GetItems`.  `GetItems` requires there is at
-lease one row, that the items in the first row (the headers) are unique, and 
-that all the rows are of the same length.  For example, this CSV can be read by
-`GetTable`, but would cause `GetItems` to throw an exception.
+that cannot be used by `GetItems`.  `GetItems` requires there is at least one
+row, that the items in the first row (the headers) are unique, and that all the
+rows are of the same length.  For example, this CSV can be read by `GetTable`,
+but would cause `GetItems` to throw an exception.
 
 ```csv
 Fruit,Fruit,Fruit
@@ -341,9 +364,9 @@ Green,Yellow
 
 ### Any to Any
 
-`GetItems` supports creating items directly from CSV text or from a table.  
-`GetTable` supports creating a table from items or from text.  
-`GetText` supporst creating CSV text from items or from a table
+`GetItems` creates items from CSV text, or from a table.  
+`GetTable` creates a table from from CSV 'text, or from items.  
+`GetText` creates CSV text from a table, or from items.  
 
 [Fubu]: <https://fubumvc.github.io/>
 [BbtS2]: <https://en.wikipedia.org/wiki/List_of_The_Big_Bang_Theory_episodes#Season_2_(2008%E2%80%9309)>

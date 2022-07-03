@@ -1,53 +1,31 @@
-﻿using System.Globalization;
+﻿using Fmbm.Text;
 
-using Fmbm.Text;
-using Fmbm.IO;
-
-Console.WriteLine(@"Hello, World!");
-
-var dir = DirPaths.AppRoot.CheckedPath;
-var inPath = Path.Combine(dir, "bbtIn.csv");
-var outPath = Path.Combine(dir, "bbtOut.csv");
-var csvTextIn = new CCFile(inPath).ReadText();
+var csvTextIn = @"Title,No. overall,No. in season,Original air date,Prod. code,U.S. viewers
+The Bad Fish Paradigm,18, 1 ,""September 22, 2008"",3T7351,9360364
+The Barbarian Sublimation,20, 3 ,""October 6, 2008"",3T7353,9329673
+The Codpiece Topology,19, 2 ,""September 29, 2008"",3T7352,8758200
+The Cooper-Nowitzki Theorem,23, 6 ,""November 3, 2008"",3T7356,9670118
+The Euclid Alternative,22, 5 ,""October 20, 2008"",3T7355,9280649
+The Griffin Equivalency,21, 4 ,""October 13, 2008"",3T7354,9356497";
 
 Episode[] episodes = Csv.GetItems(csvTextIn, row =>
     new Episode
     {
         NumOverall = row("No. overall"),
         NumInSeason = row("No. in season"),
-        Title = row("Title").Text,
+        Title = row("Title"),
         OriginalAirDate = row("Original air date"),
         USViewers = row("U.S. viewers")
     }).ToArray();
 
-var byOverall = episodes.OrderBy(ep => ep.NumOverall).ToArray();
-
-string csvTextOut = Csv.GetText(episodes, CultureInfo.InvariantCulture,
+string csvTextOut = Csv.GetText(episodes,
     ("No. Overall", ep => ep.NumOverall),
     ("No. In Season", ep => ep.NumInSeason),
     ("Title", ep => ep.Title),
     ("Original Air Date", ep => ep.OriginalAirDate),
     ("US Viewers", ep => ep.USViewers));
 
-var csvTextOutFr = Csv.GetText(byOverall, CultureInfo.GetCultureInfo("fr-FR"),
-    ("No.", e => e.NumOverall),
-    ("Title", e => e.Title.Trim('"')),
-    ("Original Air Date", e => e.OriginalAirDate),
-    ("US Viewers (M)", e => Math.Round((e.USViewers / 1000000), 2)));
-
-new CCFile(outPath).WriteText(csvTextOut);
-
-Console.WriteLine(csvTextIn);
 Console.WriteLine(csvTextOut);
-// Console.WriteLine(csvTextOutFr);
-
-var p = 0.4567m;
-var t = p.ToString("0.0%");
-Console.WriteLine(t);
-var P = decimal.Parse(t.TrimEnd('%'));
-Console.WriteLine(P);
-
-var _ = CultureInfo.InvariantCulture;
 
 class Episode
 {
