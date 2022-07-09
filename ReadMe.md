@@ -40,6 +40,7 @@ Contents
 * [Anonymous Types](#anonymous-types)  
 * [Tables and Rows](#tables-and-rows)  
 * [Any to Any](#any-to-any)
+* [F# Code Sample](#f-code-sample)
 
 &nbsp;
 
@@ -369,6 +370,34 @@ Green,Yellow
 `GetItems` creates items from CSV text, or from a table.  
 `GetTable` creates a table from from CSV 'text, or from items.  
 `GetText` creates CSV text from a table, or from items.  
+
+&nbsp;
+
+### F# Code Sample
+
+```fsharp
+let episodes =
+    Csv.GetItems(
+        csvTextIn,
+        fun row ->
+            Episode(
+                NumOverall = row.Invoke("No. overall"),
+                NumInSeason = row.Invoke("No. in season"),
+                Title = row.Invoke("Title"),
+                OriginalAirDate = row.Invoke("Original air date"),
+                USViewers = row.Invoke("U.S. viewers")))
+
+let csvText =
+    let func fsfun = Func<Episode, Object> fsfun
+    Csv.GetText(
+        episodes,
+        [| struct ("No. Overall", func (fun ep -> ep.NumOverall))
+           struct ("No. In Season", func (fun ep -> ep.NumInSeason))
+           struct ("Title", func (fun ep -> ep.Title))
+           struct ("Original Air Date", func (fun ep -> ep.OriginalAirDate))
+           struct ("US Viewers", func (fun ep -> ep.USViewers)) |])
+
+```
 
 [Fubu]: <https://fubumvc.github.io/>
 [BbtS2]: <https://en.wikipedia.org/wiki/List_of_The_Big_Bang_Theory_episodes#Season_2_(2008%E2%80%9309)>
