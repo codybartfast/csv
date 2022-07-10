@@ -84,12 +84,12 @@ Signature:
 // (string, ((string -> Cell) -> TItem)) -> IEnumerable<Item>
 public static IEnumerable<TItem> GetItems<TItem>(
         string csvText,
-        Func<Func<string, Cell>, TItem> itemMaker)
+        Func<Func<string, Cell>, TItem> makeItem)
 //          |------ row ------|
 ```
 
-`itemMaker` is called once for each row of the CSV text (except for the header
-row).  `itemMaker` is given a `row` function and returns a `TItem`.
+`makeItem` is called once for each row of the CSV text (except for the header
+row).  `makeItem` is given a `row` function and returns a `TItem`.
 
 `row` takes a header name and returns a `Cell` containing the text for that
 position.

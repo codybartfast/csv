@@ -10,7 +10,7 @@ public static class Csv
 
     public static IEnumerable<TItem> GetItems<TItem>(
         Table table,
-        Func<Func<string, Cell>, TItem> itemMaker)
+        Func<Func<string, Cell>, TItem> makeItem)
     {
         var headers = table.Rows[0].Cells.Select(c => c.Text).ToArray();
         var dict = new Dictionary<string, int>(HeaderComparer);
@@ -22,26 +22,26 @@ public static class Csv
         foreach (var row in table.Rows.Skip(1))
         {
             Func<string, Cell> getCell = header => row[getIndex(header)];
-            yield return itemMaker(getCell);
+            yield return makeItem(getCell);
         }
     }
 
     public static IEnumerable<TItem> GetItems<TItem>(
         string csvText,
-        Func<Func<string, Cell>, TItem> itemMaker)
+        Func<Func<string, Cell>, TItem> makeItem)
     {
-        return GetItems(csvText, DefaultCulture, itemMaker);
+        return GetItems(csvText, DefaultCulture, makeItem);
     }
 
 
     public static IEnumerable<TItem> GetItems<TItem>(
         string csvText,
         CultureInfo culture,
-        Func<Func<string, Cell>, TItem> itemMaker)
+        Func<Func<string, Cell>, TItem> makeItem)
     {
         var table = GetTable(csvText, culture);
         VerifyItemTable(table);
-        return GetItems(table, itemMaker);
+        return GetItems(table, makeItem);
     }
 
     internal static Table GetTable<TItem>(
