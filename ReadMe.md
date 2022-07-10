@@ -2,7 +2,7 @@ CSV
 ===
 
 Basic reading and writing of CSV (comma-separated value) text to help share data
-with other applications like spreadsheets applications.
+with other applications like a spreadsheet.
 
 Features:
 
@@ -13,6 +13,7 @@ Features:
 * Specify the culture used for concersion. (Defaults to `CurrentCultue`.)
 * Intermediate data structures: `Table`, `Row`, and `Cell`, are available for
   rudimentary editing of CSV text.
+* F# friendly methods.
 
 &nbsp;
 
@@ -40,7 +41,7 @@ Contents
 * [Anonymous Types](#anonymous-types)  
 * [Tables and Rows](#tables-and-rows)  
 * [Any to Any](#any-to-any)
-* [F# Code Sample](#f-code-sample)
+* [Using With F#](#using-with-f)
 
 &nbsp;
 
@@ -373,30 +374,49 @@ Green,Yellow
 
 &nbsp;
 
-### F# Code Sample
+### Using With F#
+
+Because of the differences between F# functions and C# Funcs the methods above
+do not work 'naturally' with F#.  'getItems', 'getText' and 'getTable' are F#
+friendly versions that accept and provide `FSharpFunc`s.  The only syntax
+differnce is that `columnInfos` is an IEnumerable (like a list) instead
+of a `params []` in the C# methods.  That is:
+
+```fsharp
+Csv.getText(items, [colInf1; colInf2])
+```
+
+instead of:
+
+```csharp
+Csv.GetText(items, colInf1, colInf2)
+```
+
+Here are the original examples using F#:
 
 ```fsharp
 let episodes =
-    Csv.GetItems(
+    Csv.getItems (
         csvTextIn,
         fun row ->
-            Episode(
-                NumOverall = row.Invoke("No. overall"),
-                NumInSeason = row.Invoke("No. in season"),
-                Title = row.Invoke("Title"),
-                OriginalAirDate = row.Invoke("Original air date"),
-                USViewers = row.Invoke("U.S. viewers")))
+            new Episode(
+                NumOverall = row "No. overall",
+                NumInSeason = row "No. in season",
+                Title = row "Title",
+                OriginalAirDate = row "Original air date",
+                USViewers = row "U.S. viewers"
+            )
+    )
 
-let csvText =
-    let func fsfun = Func<Episode, Object> fsfun
-    Csv.GetText(
+let csvTextOut =
+    Csv.getText (
         episodes,
-        [| struct ("No. Overall", func (fun ep -> ep.NumOverall))
-           struct ("No. In Season", func (fun ep -> ep.NumInSeason))
-           struct ("Title", func (fun ep -> ep.Title))
-           struct ("Original Air Date", func (fun ep -> ep.OriginalAirDate))
-           struct ("US Viewers", func (fun ep -> ep.USViewers)) |])
-
+        [ ("No. Overall", (fun ep -> ep.NumOverall))
+          ("No. In Season", (fun ep -> ep.NumInSeason))
+          ("Title", (fun ep -> ep.Title))
+          ("Original Air Date", (fun ep -> ep.OriginalAirDate))
+          ("US Viewers", (fun ep -> ep.USViewers)) ]
+    )
 ```
 
 [Fubu]: <https://fubumvc.github.io/>

@@ -8,6 +8,7 @@ The Cooper-Nowitzki Theorem,23, 6 ,""November 3, 2008"",3T7356,9670118
 The Euclid Alternative,22, 5 ,""October 20, 2008"",3T7355,9280649
 The Griffin Equivalency,21, 4 ,""October 13, 2008"",3T7354,9356497";
 
+
 Episode[] episodes = Csv.GetItems(csvTextIn, row =>
     new Episode
     {

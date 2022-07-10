@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>1.0.0-beta.2</Version>
+    <Version>1.0.0-beta.2.9</Version>
     <Description>Basic reading and writing of CSV (comma-separated value) text.</Description>
     <AssemblyName>Fmbm.Csv</AssemblyName>
     <AssemblyTitle>Fmbm.Csv</AssemblyTitle>
     <Authors>John Donnellan</Authors>
-    <PackageTags>read;write;csv;basic;fmbm</PackageTags>
+    <PackageTags>read;write;csv;basic;C#;F#;fmbm</PackageTags>
     <PackageReadmeFile>ReadMe.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/codybartfast/csv</RepositoryUrl> 
@@ -19,7 +19,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="../../ReadMe.md" Pack="true" PackagePath="\"/>
+    <None Include="../../ReadMe.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="fsharp.core" Version="6.0.5" />
   </ItemGroup>
 
 </Project>
