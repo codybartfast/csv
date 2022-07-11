@@ -13,7 +13,7 @@ Features:
 * Specify the culture used for concersion. (Defaults to `CurrentCultue`.)
 * Intermediate data structures: `Table`, `Row`, and `Cell`, are available for
   rudimentary editing of CSV text.
-* F# friendly methods.
+* F# friendly.
 
 &nbsp;
 
@@ -207,7 +207,7 @@ Automatic Conversion
 ### Conversion To Text
 
 `DateTime`: converts to text using the format `yyyy-MM-dd HH:mm`. (This format
-allows for time data to be included and is readable by most spreadsheet apps).
+allows for the time to be included and is readable by most spreadsheet apps).
 
 The standard numeric types are converted by calling `.ToString(<culture>)` on
 the number.
@@ -374,22 +374,22 @@ Green,Yellow
 
 &nbsp;
 
-### Using With F#
+### Using With F\#
 
 Because of the differences between F# functions and C# Funcs the methods above
 do not work 'naturally' with F#.  'getItems', 'getText' and 'getTable' are F#
 friendly versions that accept and provide `FSharpFunc`s.  The only syntax
 differnce is that `columnInfos` is an IEnumerable (like a list) instead
-of a `params []` in the C# methods.  That is:
+of `params []` in the C# methods.  That is:
 
 ```fsharp
-Csv.getText(items, [colInf1; colInf2])
+Csv.getText(items, [(hdr, getval); (hdr, getval)])
 ```
 
 instead of:
 
 ```csharp
-Csv.GetText(items, colInf1, colInf2)
+Csv.GetText(items, (hdr, getval), (hdr, getval))
 ```
 
 Here are the original examples using F#:
