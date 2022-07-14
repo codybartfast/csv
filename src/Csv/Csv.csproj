@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>1.0.0-beta.2.11</Version>
+    <Version>1.0.0-beta.2.12</Version>
     <Description>Basic reading and writing of CSV (comma-separated value) text.</Description>
     <AssemblyName>Fmbm.Csv</AssemblyName>
     <AssemblyTitle>Fmbm.Csv</AssemblyTitle>

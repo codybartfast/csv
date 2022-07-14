@@ -36,6 +36,9 @@ public partial class Cell
 
         switch (o)
         {
+            case Cell cell:
+                this.Text = cell.Text;
+                break;
             case string text:
                 this.Text = text;
                 break;
