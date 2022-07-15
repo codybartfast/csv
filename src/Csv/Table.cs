@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 
 namespace Fmbm.Text;
@@ -19,6 +20,13 @@ public class Table
 
     public List<Row> Rows { get; set; }
 
+    public Table(
+        IEnumerable<IEnumerable<object>> EnumOfEnums,
+        CultureInfo? ci = null)
+    : this(EnumOfEnums.Select(en =>
+        new Row(en.Select(o => new Cell(o, ci ?? Cell.DefaultCulture)))))
+    { }
+
     public Table(IEnumerable<Row> rows)
     {
         this.Rows = new List<Row>(rows);
@@ -30,6 +38,11 @@ public class Table
     {
         get => Rows[idx];
         set => Rows[idx] = value;
+    }
+
+    public string[][] ToStringArrays()
+    {
+        return Rows.Select(row => row.ToStringArray()).ToArray();
     }
 
     public override string ToString()

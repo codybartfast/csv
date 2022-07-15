@@ -19,6 +19,11 @@ public class Row
         set => Cells[idx] = value;
     }
 
+    public string[] ToStringArray()
+    {
+        return Cells.Select(c => c.Text).ToArray();
+    }
+
     public override string ToString()
     {
         return String.Join(Comma, Cells.Select(c => c.ToString()));
