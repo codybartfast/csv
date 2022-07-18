@@ -21,7 +21,7 @@ public class Table
     public List<Row> Rows { get; set; }
 
     public Table(
-        IEnumerable<IEnumerable<object>> EnumOfEnums,
+        IEnumerable<IEnumerable<string>> EnumOfEnums,
         CultureInfo? ci = null)
     : this(EnumOfEnums.Select(en => new Row(en, ci)))
     { }
