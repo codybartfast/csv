@@ -1,3 +1,4 @@
+using System.Globalization;
 namespace Fmbm.Text;
 
 public class Row
@@ -5,6 +6,10 @@ public class Row
     public const string Comma = ",";
 
     public List<Cell> Cells { get; set; }
+
+    public Row(IEnumerable<object> objects, CultureInfo? ci = null)
+    : this(objects.Select(o => new Cell(o, ci ?? Cell.DefaultCulture)))
+    { }
 
     public Row(IEnumerable<Cell> cells)
     {

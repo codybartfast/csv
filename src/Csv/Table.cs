@@ -23,8 +23,7 @@ public class Table
     public Table(
         IEnumerable<IEnumerable<object>> EnumOfEnums,
         CultureInfo? ci = null)
-    : this(EnumOfEnums.Select(en =>
-        new Row(en.Select(o => new Cell(o, ci ?? Cell.DefaultCulture)))))
+    : this(EnumOfEnums.Select(en => new Row(en, ci)))
     { }
 
     public Table(IEnumerable<Row> rows)
