@@ -7,6 +7,10 @@ public class Row
 
     public List<Cell> Cells { get; set; }
 
+    public Row(int length, CultureInfo? ci = null)
+    : this(new string[length], ci)
+    { }
+
     public Row(IEnumerable<string> objects, CultureInfo? ci = null)
     : this(objects.Select(o => new Cell(o, ci ?? Cell.DefaultCulture)))
     { }

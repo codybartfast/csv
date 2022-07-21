@@ -20,6 +20,10 @@ public class Table
 
     public List<Row> Rows { get; set; }
 
+    public Table(int width, int height, CultureInfo? ci = null)
+    : this(new object[height].Select(_ => new Row(width, ci)))
+    { }
+
     public Table(
         IEnumerable<IEnumerable<string>> EnumOfEnums,
         CultureInfo? ci = null)
