@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>1.0.1</Version>
+    <Version>1.0.2-beta.0</Version>
     <Description>Basic reading and writing of CSV (comma-separated value) text.</Description>
     <AssemblyName>Fmbm.Csv</AssemblyName>
     <AssemblyTitle>Fmbm.Csv</AssemblyTitle>
     <Authors>John Donnellan</Authors>
-    <PackageTags>read;write;csv;basic;C#;F#;fmbm</PackageTags>
-    <PackageReadmeFile>ReadMe.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/codybartfast/csv</RepositoryUrl> 
-    <RepositoryType>git</RepositoryType> 
+    <PackageReadmeFile>ReadMe.md</PackageReadmeFile>
+    <PackageTags>read;write;csv;basic;C#;F#;fmbm</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/codybartfast/csv</RepositoryUrl>
 
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
